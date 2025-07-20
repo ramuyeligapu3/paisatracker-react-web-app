@@ -1,0 +1,50 @@
+.table__wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+.table__right {
+  text-align: right;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table__btn {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.table__btn.edit {
+  background-color: #007bff;
+  color: white;
+}
+
+.table__btn.delete {
+  background-color: red;
+  color: white;
+}
+
+.table__no-data {
+  padding: 20px;
+  text-align: center;
+  color: #777;
+}

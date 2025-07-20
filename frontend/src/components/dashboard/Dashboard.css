@@ -1,0 +1,152 @@
+:root {
+  --primary-color: #8FBC8F;
+  --secondary-color: #F5DEB3;
+  --accent-color: #FF7F50;
+  --background-color: #f0f2f5;
+  --card-color: #fff;
+  --text-color: #333;
+  --border-radius: 10px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.dashboard-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+}
+
+.dashboard-header {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.stats {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.card {
+  background-color: var(--card-color);
+  padding: 20px;
+  flex: 1 1 200px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.card-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.charts {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.chart {
+  flex: 1 1 45%;
+  background-color: var(--card-color);
+  height: 200px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+}
+
+.bottom-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.transactions,
+.actions {
+  background-color: var(--card-color);
+  flex: 1 1 300px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.transaction {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.transaction-name {
+  font-weight: 600;
+}
+
+.transaction-date {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.transaction-amount {
+  font-weight: 600;
+}
+
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 12px;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--primary-color);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.action-btn:hover {
+  background-color: var(--accent-color);
+}
+
+@media(max-width: 768px) {
+  .charts,
+  .bottom-section {
+    flex-direction: column;
+  }
+
+  .charts > div,
+  .bottom-section > div {
+    flex: 1 1 100%;
+  }
+}

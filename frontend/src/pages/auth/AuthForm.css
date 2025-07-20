@@ -1,0 +1,85 @@
+/* AuthForm.css */
+
+.auth-form-container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+
+.auth-form-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.auth-form-group {
+  margin-bottom: 15px;
+}
+
+.auth-form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.auth-form-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.auth-form-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.auth-form-button:hover {
+  background-color: #444;
+}
+
+.auth-form-footer {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.auth-form-footer button {
+  background: none;
+  border: none;
+  color: blue;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Responsive for AuthForm */
+@media (max-width: 480px) {
+  .auth-form-container {
+    padding: 20px;
+    max-width: 100%;
+    margin: 0 10px; /* add some breathing space from screen edges */
+  }
+
+  .auth-form-title {
+    font-size: 18px;
+  }
+
+  .auth-form-button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}

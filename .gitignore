@@ -1,0 +1,84 @@
+# --- Node / Vite (frontend) ---
+node_modules/
+dist/
+build/
+.vite/
+.env
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Optional: if you use VSCode for frontend
+.vscode/
+
+# --- Python (backend) ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env/
+venv/
+env/
+fastapi_env/
+*.sqlite3
+*.db
+*.log
+*.pot
+*.mo
+*.pyc
+*.pyo
+*.pytest_cache/
+.ipynb_checkpoints/
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.dylib
+*.dll
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# PyCharm project files
+.idea/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# pytest
+.cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Docker files
+docker-compose.override.yml
+
+# Misc
+*.swp
+*~
+.project
+.settings/
+
+# Logs
+*.log
+
+# FastAPI Uvicorn reload files
+reload/
+
+# --- OS generated files ---
+.DS_Store
+Thumbs.db

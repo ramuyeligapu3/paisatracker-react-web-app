@@ -1,0 +1,30 @@
+.transactions-page {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Summary Cards */
+
+.summary-cards {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+
+
+/* Responsive Layout for Filters, Table, Pagination */
+.section {
+  margin-bottom: 20px;
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+  .summary-cards {
+    flex-direction: column;
+  }
+}
