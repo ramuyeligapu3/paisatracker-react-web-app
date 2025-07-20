@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import date
 from beanie import PydanticObjectId
-from app.models.models import TransactionModel
+from backend.app.models.models import TransactionModel
 from bson import ObjectId
 transaction_router = APIRouter()
 

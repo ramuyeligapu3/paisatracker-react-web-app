@@ -2,11 +2,11 @@ import os
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from starlette.staticfiles import StaticFiles
-from app.models.models import *
+from backend.app.models.models import *
 
 app = FastAPI()
-from app.controller.auth_router import auth_router
-from app.controller.transaction_router import transaction_router
+from backend.app.controller.auth_router import auth_router
+from backend.app.controller.transaction_router import transaction_router
 
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])

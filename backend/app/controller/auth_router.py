@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
-from app.models.models import *
+from backend.app.models.models import *
 
 import bcrypt
 
