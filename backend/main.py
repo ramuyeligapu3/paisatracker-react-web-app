@@ -16,13 +16,19 @@ frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "f
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8000","http://localhost:5173"],  # React dev server
+    allow_origins=[
+        "http://localhost:5173",  # React dev (keep this if you're testing locally)
+        "https://paisaatracker.onrender.com",  # 🚀 your deployed React app
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.on_event("startup")
 async def init_db():
