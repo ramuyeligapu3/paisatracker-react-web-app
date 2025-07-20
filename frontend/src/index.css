@@ -75,3 +75,19 @@ button:focus-visible {
     color: #747bff;
   }
 }
+
+/* src/index.css or src/App.css */
+
+input, textarea, select {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+@media (prefers-color-scheme: dark) {
+  input, textarea, select {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    border: 1px solid #555;
+  }
+}
