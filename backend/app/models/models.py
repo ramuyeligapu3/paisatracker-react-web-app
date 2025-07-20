@@ -16,7 +16,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import PydanticObjectId
 import os
 
-MONGO_URI = os.getenv("MONGO_URI")
+MONGO_URI = os.getenv("MONGO_URI", "").strip()
 if not MONGO_URI:
     raise Exception("MONGO_URI environment variable is missing")
 
