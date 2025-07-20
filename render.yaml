@@ -2,9 +2,10 @@ services:
   - type: web
     name: fullstack-fastapi-react
     env: python
-    rootDir: backend
+    rootDir: backend  # Important! Backend is the app root
     buildCommand: |
-      cd ../frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt
+      cd ../frontend && npm install && npm run build
+      cd ../backend && pip install -r requirements.txt
     startCommand: gunicorn -k uvicorn.workers.UvicornWorker main:app
     envVars:
       - key: PYTHON_VERSION
