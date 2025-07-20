@@ -1,185 +1,194 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from "../../components/Card";
 import TransactionForm from "./TransactionForm";
 import Table from "../../components/Table";
-
 import Filters from '../../components/Filters';
 import Pagination from '../../components/Pagination';
 import Toast from '../../components/Toast';
 import './TransactionPage.css';
 
-const categoryOptions = [
-  'Food & Dining',
-  'Income',
-  'Transportation',
-  'Entertainment',
-  'Bills & Utilities',
-];
+import {
+  getTransactions,
+  createTransaction,
+  updateTransaction,
+  deleteTransaction
+} from '../../services/api';
 
-const dynamicColumns=[
-    { key: 'date', label: 'Date' },
-    { key: 'description', label: 'Description' },
-    { key: 'category', label: 'Category' },
-    { key: 'account', label: 'Account' },
-    {
-      key: 'amount',
-      label: 'Amount',
-      align: 'right',
-      render: (value) =>
-        value < 0
-          ? `-₹${Math.abs(value).toLocaleString()}`
-          : `+₹${value.toLocaleString()}`
-    }
-  ]
+const categoryOptions = [
+  'Food & Dining', 'Income', 'Transportation', 'Entertainment', 'Bills & Utilities'
+];
 
 const accountOptions = [
-  'Checking Account',
-  'Savings Account',
-  'Credit Card',
+  'Checking Account', 'Savings Account', 'Credit Card'
 ];
 
-const initialTransactions = [
+const dynamicColumns = [
+  { key: 'date', label: 'Date' },
+  { key: 'description', label: 'Description' },
+  { key: 'category', label: 'Category' },
+  { key: 'account', label: 'Account' },
   {
-    date: '2025-01-15',
-    description: 'Grocery Shopping - Walmart',
-    category: 'Food & Dining',
-    account: 'Checking Account',
-    amount: -2450,
-  },
-  {
-    date: '2025-01-14',
-    description: 'Salary Deposit',
-    category: 'Income',
-    account: 'Savings Account',
-    amount: 45000,
-  },
+    key: 'amount',
+    label: 'Amount',
+    align: 'right',
+    render: (value) =>
+      value < 0
+        ? `-₹${Math.abs(value).toLocaleString()}`
+        : `+₹${value.toLocaleString()}`
+  }
 ];
 
 function TransactionsPage() {
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All Categories');
   const [accountFilter, setAccountFilter] = useState('All Accounts');
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+
   const transactionsPerPage = 5;
 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('add');
-  const [selectedTransactionIndex, setSelectedTransactionIndex] = useState(null);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [transactionForm, setTransactionForm] = useState({
-    date: '',
-    description: '',
-    category: categoryOptions[0],
-    account: accountOptions[0],
-    amount: ''
+    date: '', description: '', category: categoryOptions[0],
+    account: accountOptions[0], amount: ''
   });
+
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
-  const totalIncome = transactions.reduce(
-    (sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum),
-    0
-  );
-  const totalExpenses = transactions.reduce(
-    (sum, tx) => (tx.amount < 0 ? sum + tx.amount : sum),
-    0
-  );
-  const netBalance = totalIncome + totalExpenses;
+  useEffect(() => {
+    fetchTransactions();
+  }, [searchTerm, categoryFilter, accountFilter, currentPage]);
 
-  const filteredTransactions = transactions.filter((tx) => {
-    const matchesSearch =
-      tx.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tx.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tx.account.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      categoryFilter === 'All Categories' || tx.category === categoryFilter;
-    const matchesAccount =
-      accountFilter === 'All Accounts' || tx.account === accountFilter;
-    return matchesSearch && matchesCategory && matchesAccount;
-  });
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+      const userId = localStorage.getItem("userId");
 
-  const totalTransactions = filteredTransactions.length;
-  const totalPages = Math.ceil(totalTransactions / transactionsPerPage);
-  const indexOfLast = currentPage * transactionsPerPage;
-  const indexOfFirst = indexOfLast - transactionsPerPage;
-  const currentTransactions = filteredTransactions.slice(indexOfFirst, indexOfLast);
+      if (!userId) {
+        setToastMessage("User not logged in");
+        setShowToast(true);
+        return;
+      }
 
-  const handlePageChange = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
+      const params = {
+        userId,
+        search: searchTerm,
+        category: categoryFilter !== 'All Categories' ? categoryFilter : '',
+        account: accountFilter !== 'All Accounts' ? accountFilter : '',
+        page: currentPage,
+        limit: transactionsPerPage
+      };
+
+      const response = await getTransactions(params);
+      setTransactions(response.data || response);
+    } catch (err) {
+      setToastMessage("Failed to load transactions");
+      setShowToast(true);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const totalIncome = transactions.reduce(
+    (sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum), 0);
+  const totalExpenses = transactions.reduce(
+    (sum, tx) => (tx.amount < 0 ? sum + tx.amount : sum), 0);
+  const netBalance = totalIncome + totalExpenses;
 
   const openAddModal = () => {
     setModalType('add');
     setTransactionForm({
-      date: '',
-      description: '',
-      category: categoryOptions[0],
-      account: accountOptions[0],
-      amount: ''
+      date: '', description: '', category: categoryOptions[0],
+      account: accountOptions[0], amount: ''
     });
     setShowModal(true);
   };
 
-  const openEditModal = (index) => {
+  const openEditModal = (transaction) => {
     setModalType('edit');
-    setSelectedTransactionIndex(index);
-    const tx = transactions[index];
+    setSelectedTransaction(transaction);
+
     setTransactionForm({
-      date: tx.date,
-      description: tx.description,
-      category: tx.category,
-      account: tx.account,
-      amount: tx.amount
+      date: transaction.date?.substring(0, 10) || '',
+      description: transaction.description || '',
+      category: transaction.category || categoryOptions[0],
+      account: transaction.account || accountOptions[0],
+      amount: transaction.amount?.toString() || '',
     });
+
     setShowModal(true);
   };
 
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedTransaction(null);
+  };
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setTransactionForm({ ...transactionForm, [name]: value });
   };
 
-  const handleSave = () => {
-    if (!transactionForm.date || !transactionForm.description || !transactionForm.category || !transactionForm.account || !transactionForm.amount) {
-      alert('Please fill all fields');
-      return;
+  const handleSave = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const formatted = {
+        ...transactionForm,
+        amount: parseFloat(transactionForm.amount),
+        user_id: userId
+      };
+
+      if (modalType === 'add') {
+        await createTransaction(formatted);
+        setToastMessage("Transaction added successfully");
+      } else {
+        await updateTransaction(selectedTransaction.id, formatted);
+        setToastMessage("Transaction updated successfully");
+      }
+
+      closeModal();
+      await fetchTransactions();
+    } catch (err) {
+      setToastMessage("Error saving transaction");
+    } finally {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
-
-    const updatedTx = { ...transactionForm, amount: parseFloat(transactionForm.amount) };
-
-    if (modalType === 'add') {
-      setTransactions([updatedTx, ...transactions]);
-      setToastMessage('Transaction added successfully!');
-    } else if (modalType === 'edit' && selectedTransactionIndex !== null) {
-      const newTransactions = [...transactions];
-      newTransactions[selectedTransactionIndex] = updatedTx;
-      setTransactions(newTransactions);
-      setToastMessage('Transaction updated successfully!');
-    }
-
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-    setShowModal(false);
   };
 
-  const handleDelete = (index) => {
-    const newTxs = [...transactions];
-    newTxs.splice(index, 1);
-    setTransactions(newTxs);
-    setToastMessage('Transaction deleted');
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const handleDelete = async (transaction) => {
+    try {
+      await deleteTransaction(transaction.id);
+      setToastMessage("Transaction deleted");
+      await fetchTransactions();
+    } catch (err) {
+      setToastMessage("Error deleting transaction");
+    } finally {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
+  };
+
+  const totalPages = Math.ceil(transactions.length / transactionsPerPage);
+  const currentTransactions = transactions.slice(
+    (currentPage - 1) * transactionsPerPage,
+    currentPage * transactionsPerPage
+  );
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
   };
 
   return (
     <div className="transactions-page">
-        <h2>Transactions</h2>
-        <br></br>
-        <p>Track and manage all your financial transactions</p>
-        <br></br>
+      <h2>Transactions</h2>
+      <p>Track and manage all your financial transactions</p>
+
       <Filters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -191,10 +200,11 @@ function TransactionsPage() {
         accountOptions={accountOptions}
         onAddClick={openAddModal}
       />
+
       <div className="summary-cards">
         <Card title="Total Income" amount={totalIncome} color="green" />
         <Card title="Total Expenses" amount={totalExpenses} color="red" />
-         <Card title="Net Balance" amount={netBalance} color="blue" />
+        <Card title="Net Balance" amount={netBalance} color="blue" />
       </div>
 
       <TransactionForm
@@ -207,18 +217,21 @@ function TransactionsPage() {
         categories={categoryOptions}
         accounts={accountOptions}
       />
-     <Table
+
+      <Table
         data={currentTransactions}
         onEdit={openEditModal}
         onDelete={handleDelete}
         columns={dynamicColumns}
-        />
+        loading={loading}
+      />
 
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+
       <Toast show={showToast} message={toastMessage} />
     </div>
   );
