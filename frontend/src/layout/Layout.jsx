@@ -37,7 +37,7 @@ const Layout = () => {
       <main
         className="main-content"
         style={{
-          marginTop: '80px',
+          marginTop: '70px',
           padding: '20px',
           marginLeft: windowWidth >= 768 && sidebarOpen ? '250px' : '0',
           transition: 'margin-left 0.3s ease',

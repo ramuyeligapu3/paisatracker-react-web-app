@@ -3,9 +3,11 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Removed color-scheme for clarity, you can keep or omit it */
+  /* color-scheme: light dark; */
+
+  color: rgba(244, 239, 239, 0.87);
+  background-color:  #fff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -20,13 +22,7 @@ body {
   width: 100%;
   overflow-x: hidden;
   background-color: var(--background-color, #fff);
-}
-
-#root {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  /* Set a default background color, can override if needed */
 }
 
 /* Optional base styles */
@@ -63,36 +59,25 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-  a:hover {
-    color: #747bff;
-  }
-}
-
-input, textarea, select {
+/* Styles for input, textarea, select with light colors in both modes */
+input,
+textarea,
+select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #ccc !important;
+  background-color:#fff; /* Light grey background */
+  color: #000; /* Black text */
+  border: 1px solid #ccc; /* Light border */
   padding: 10px;
   border-radius: 4px;
   box-sizing: border-box;
 }
 
-/* Dark mode override */
-@media (prefers-color-scheme: dark) {
-  input, textarea, select {
-    background-color: #fff !important;
-    color: #000  !important;
-    border: 1px solid #555 !important;
-  }
+/* Optional: Add focus styles for inputs */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid  #000;;
+  outline-offset: 2px;
 }
