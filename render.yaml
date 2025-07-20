@@ -4,8 +4,7 @@ services:
     env: python
     rootDir: backend
     buildCommand: |
-      cd ../frontend && npm install && npm run build
-      pip install -r requirements.txt
+      cd ../frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt
     startCommand: gunicorn -k uvicorn.workers.UvicornWorker main:app
     envVars:
       - key: PYTHON_VERSION
