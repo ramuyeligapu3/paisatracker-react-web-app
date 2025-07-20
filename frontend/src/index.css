@@ -76,18 +76,23 @@ button:focus-visible {
   }
 }
 
-/* src/index.css or src/App.css */
-
 input, textarea, select {
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #ccc;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #fff !important;
+  color: #000 !important;
+  border: 1px solid #ccc !important;
+  padding: 10px;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
+/* Dark mode override */
 @media (prefers-color-scheme: dark) {
   input, textarea, select {
-    background-color: #1e1e1e;
-    color: #f1f1f1;
-    border: 1px solid #555;
+    background-color: #fff !important;
+    color: #000  !important;
+    border: 1px solid #555 !important;
   }
 }
