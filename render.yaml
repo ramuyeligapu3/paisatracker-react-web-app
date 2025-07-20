@@ -9,7 +9,4 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11
-      - key: MONGO_URI
-        value: mongodb+srv://<username>:<password>@cluster0.zrru1.mongodb.net/paisaatracker_db?retryWrites=true&w=majority
-      - key: PYTHONPATH
-        value: backend
+     
