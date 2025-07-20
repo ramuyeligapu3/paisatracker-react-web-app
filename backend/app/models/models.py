@@ -16,21 +16,14 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import PydanticObjectId
 import os
 
-# MONGO_URI = os.getenv("MONGO_URI")
-# if not MONGO_URI:
-#     raise Exception("MONGO_URI environment variable is missing")
+MONGO_URI = os.getenv("MONGO_URI")
+if not MONGO_URI:
+    raise Exception("MONGO_URI environment variable is missing")
 
-# client = AsyncIOMotorClient(MONGO_URI)
-# db = client.get_default_database()  # picks `paisaatracker_db` from URI
+client = AsyncIOMotorClient(MONGO_URI)
+db = client.get_default_database()  # picks `paisaatracker_db` from URI
 
-# --- MongoDB Setup ---
-# MONGO_URI = 
-# DATABASE_NAME = "paisaatracker_db"
 
-client = AsyncIOMotorClient("mongodb+srv://ramuyeligapu6:Kr1pn4c8NjMp7eTM@cluster0.zrru1.mongodb.net/")
-db = client["paisaatracker_db"]
-
-# --- Models ---
 
 class UserModel(Document):
     email: EmailStr
