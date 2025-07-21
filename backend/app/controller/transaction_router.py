@@ -31,6 +31,9 @@ class TransactionResponse(TransactionBase):
 
     class Config:
         orm_mode = True
+class TransactionListResponse(BaseModel):
+    total: int
+    transactions: List[TransactionResponse]
 
 # ----------- Utility Response Wrapper -----------
 
@@ -52,8 +55,10 @@ async def create_transaction(tx: TransactionCreate):
         "data": {"id": str(new_tx.id)}
     }
 
+from beanie.operators import Or, RegEx
+from bson import ObjectId
 
-@transaction_router.get("/transactions", response_model=List[TransactionResponse])
+@transaction_router.get("/transactions", response_model=TransactionListResponse)
 async def get_transactions(
     user_id: str = Query(...),
     search: str = "",
@@ -64,37 +69,43 @@ async def get_transactions(
 ):
     skip = (page - 1) * limit
 
-    filters = {"user_id": ObjectId(user_id)}  # ✅ Fix: correct Beanie user_id field
+    print("((((((((((((((((user_id))))))))))))))))",user_id)
 
-    # Optional regex search
+    # ✅ Correct filter for Linked field
+    base_filter = TransactionModel.user_id.id == ObjectId(user_id)
+    query_filters = [base_filter]
+
     if search:
-        filters["$or"] = [
-            {"description": {"$regex": search, "$options": "i"}},
-            {"category": {"$regex": search, "$options": "i"}},
-            {"account": {"$regex": search, "$options": "i"}}
-        ]
+        query_filters.append(
+            Or(
+                RegEx(TransactionModel.description, search, options="i"),
+                RegEx(TransactionModel.category, search, options="i"),
+                RegEx(TransactionModel.account, search, options="i")
+            )
+        )
+
     if category:
-        filters["category"] = category
+        query_filters.append(TransactionModel.category == category)
     if account:
-        filters["account"] = account
+        query_filters.append(TransactionModel.account == account)
+
+    total = await TransactionModel.find(*query_filters).count()
 
     transactions_cursor = (
-        TransactionModel.find(filters)
+        TransactionModel.find(*query_filters)
         .sort("-date")
         .skip(skip)
         .limit(limit)
     )
-    print("((((((((((((((((((((((transactions_cursor))))))))))))))))))))))",transactions_cursor)
+
     transactions = await transactions_cursor.to_list()
-    print(transactions,"((((((((((((((((((((((((((((transactions))))))))))))))))))))))))))))")
 
-    transactions = await TransactionModel.find_all().to_list()
-    print("All Transactions:", transactions)
-
-    return [
+    return {
+    "total": total,
+    "transactions": [
         TransactionResponse(
             id=str(t.id),
-            user_id=str(t.user_id),
+            user_id=str(t.user_id.ref.id),
             date=t.date,
             description=t.description,
             category=t.category,
@@ -103,6 +114,7 @@ async def get_transactions(
         )
         for t in transactions
     ]
+}
 
 
 

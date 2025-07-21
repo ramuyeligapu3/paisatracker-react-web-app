@@ -45,6 +45,7 @@ function TransactionsPage() {
   const [accountFilter, setAccountFilter] = useState('All Accounts');
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
 
   const transactionsPerPage = 5;
 
@@ -82,15 +83,18 @@ function TransactionsPage() {
         page: currentPage,
         limit: transactionsPerPage
       };
-
       const response = await getTransactions(params);
-      setTransactions(response.data || response);
-    } catch (err) {
-      setToastMessage("Failed to load transactions");
-      setShowToast(true);
-    } finally {
-      setLoading(false);
-    }
+        const { transactions, total } = response.data || response;
+        console.log("((((((((((response",response)
+
+        setTransactions(transactions);
+        setTotalCount(total); // <-- you need to define this in your component's state
+      } catch (err) {
+        setToastMessage("Failed to load transactions");
+        setShowToast(true);
+      } finally {
+        setLoading(false);
+      }
   };
 
   const totalIncome = transactions.reduce(
@@ -173,11 +177,9 @@ function TransactionsPage() {
     }
   };
 
-  const totalPages = Math.ceil(transactions.length / transactionsPerPage);
-  const currentTransactions = transactions.slice(
-    (currentPage - 1) * transactionsPerPage,
-    currentPage * transactionsPerPage
-  );
+  const totalPages = Math.ceil(totalCount / transactionsPerPage);
+const currentTransactions = transactions; // It's already paginated from the backend
+
 
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;

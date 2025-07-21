@@ -1,3 +1,4 @@
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 import React, { useState } from 'react';
 import './AuthForm.css';
 import Toast from '../../components/Toast';
@@ -9,6 +10,10 @@ const AuthForm = ({ view, onSwitchView }) => {
   const [password, setPassword] = useState('');
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const navigate = useNavigate(); 
+  // Inside component:
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -29,6 +34,7 @@ const handleSubmit = async (e) => {
       if (res.success) {
         localStorage.setItem('userId', res.data.userId);  // assuming res.data.userId exists
         navigate('/user');
+        showToast("Login sucessfull", 'success');
       }
 
 
@@ -74,16 +80,22 @@ const handleSubmit = async (e) => {
         </div>
 
         {view !== 'forgot' && (
-          <div className="auth-form-group">
+          <div className="auth-form-group password-group">
             <label>Password</label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span className="toggle-icon" onClick={togglePasswordVisibility}>
+                {showPassword ? <FaEye />:<FaEyeSlash />}
+              </span>
+            </div>
           </div>
+
         )}
 
         <button type="submit" className="auth-form-button">

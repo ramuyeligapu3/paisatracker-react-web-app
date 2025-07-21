@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://paisaatracker.onrender.com'; // Change for production
+// const BASE_URL = 'https://paisaatracker.onrender.com'; // Change for production
+const BASE_URL = 'http://localhost:8000'; // Change for production
 
 const api = axios.create({
   baseURL: BASE_URL,

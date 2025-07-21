@@ -15,6 +15,8 @@ from typing import Optional
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import PydanticObjectId
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI", "").strip()
 if not MONGO_URI:
