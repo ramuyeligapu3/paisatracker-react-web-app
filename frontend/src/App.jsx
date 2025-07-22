@@ -4,6 +4,7 @@ import AuthPage from './pages/auth/AuthPage';
 import TransactionPage from './pages/transactions/TransactionPage';
 import Layout from './layout/Layout';  // Use Layout, not Navbar
 import DashboardPage from './pages/DashboardPage';
+import LogoutPage from './pages/LogoutPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 
@@ -21,6 +22,7 @@ const App = () => {
 
         <Route index element={<DashboardPage />} />
         <Route path="transactions" element={<TransactionPage />} />
+         <Route path="logout" element={<LogoutPage />} /> {/* ✅ Added */}
 
       </Route>
     </Routes>

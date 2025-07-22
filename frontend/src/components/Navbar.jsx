@@ -8,7 +8,7 @@ const Navbar = ({ sidebarOpen, toggleSidebar, handleMenuClick }) => {
   const menuItems = [
     { label: 'Dashboard', link: '/', icon: '🏠' },
     { label: 'Transactions', link: '/transactions', icon: '💰' },
-    { label: 'Logout', link: '/login', icon: '🚪' },
+    { label: 'Logout', link: '/logout', icon: '🚪' },
   ];
 
   return (
