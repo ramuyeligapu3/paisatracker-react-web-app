@@ -4,12 +4,15 @@ import './AuthForm.css';
 import Toast from '../../components/Toast';
 import { login, signup, forgotPassword } from '../../services/api'; // Adjust path if needed
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // adjust path if needed
+
 
 const AuthForm = ({ view, onSwitchView }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const { login: authLogin } = useAuth(); // rename to avoid clash with api login 
   // Inside component:
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
@@ -29,12 +32,15 @@ const handleSubmit = async (e) => {
 
     if (view === 'login') {
       res = await login(email, password);
-      showToast(res.message, 'success');
+      
       console.log(res)
       if (res.success) {
-        localStorage.setItem('userId', res.data.userId);  // assuming res.data.userId exists
-        navigate('/user');
-        showToast("Login sucessfull", 'success');
+       
+        showToast(res.message, 'success');
+        setTimeout(() => {
+          authLogin(res.data.userId);
+          navigate('/');
+        }, 3000); // wait for toast to be visible
       }
 
 

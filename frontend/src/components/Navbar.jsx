@@ -6,9 +6,9 @@ const Navbar = ({ sidebarOpen, toggleSidebar, handleMenuClick }) => {
   const location = useLocation();
 
   const menuItems = [
-    { label: 'Dashboard', link: '/user', icon: '🏠' },
-    { label: 'Transactions', link: '/user/transactions', icon: '💰' },
-    { label: 'Logout', link: '/', icon: '🚪' },
+    { label: 'Dashboard', link: '/', icon: '🏠' },
+    { label: 'Transactions', link: '/transactions', icon: '💰' },
+    { label: 'Logout', link: '/login', icon: '🚪' },
   ];
 
   return (
