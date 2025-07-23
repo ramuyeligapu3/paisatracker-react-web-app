@@ -34,7 +34,7 @@ function TransactionForm({ show, onClose, formData, onChange, onSave, type, cate
             className="modal__input"
           >
             {categories.map((cat) => (
-              <option key={cat}>{cat}</option>
+              <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
 
@@ -45,7 +45,7 @@ function TransactionForm({ show, onClose, formData, onChange, onSave, type, cate
             className="modal__input"
           >
             {accounts.map((acc) => (
-              <option key={acc}>{acc}</option>
+              <option key={acc} value={acc}>{acc}</option>
             ))}
           </select>
 

@@ -58,3 +58,15 @@
   color: #000;
 }
 
+
+.modal__input[type="date"] {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  background-color: #fff;
+  color: #333;
+}
+

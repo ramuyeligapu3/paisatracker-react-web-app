@@ -22,7 +22,7 @@ const App = () => {
 
         <Route index element={<DashboardPage />} />
         <Route path="transactions" element={<TransactionPage />} />
-         <Route path="logout" element={<LogoutPage />} /> {/* ✅ Added */}
+        <Route path="logout" element={<LogoutPage />} />
 
       </Route>
     </Routes>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://paisaatracker.onrender.com'; // Change for production
-// const BASE_URL = 'http://localhost:8000'; // Change for production
+// const BASE_URL = 'https:///paisaatracker.onrender.com'; // Change for production
+const BASE_URL = 'http://localhost:8000'; // Change for production
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -62,7 +62,7 @@ export const createTransaction = async (transactionData) => {
 
 // Update a transaction
 export const updateTransaction = async (id, transactionData) => {
-  const response = await api.put(`/api/transactions/${id}`, transactionData);
+  const response = await api.post(`/api/transactions/${id}`, transactionData);
   return response.data;
 };
 

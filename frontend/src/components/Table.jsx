@@ -33,12 +33,12 @@ const Table = ({ columns, data, onEdit, onDelete }) => {
                 {(onEdit || onDelete) && (
                   <td>
                     {onEdit && (
-                      <button className="table__btn edit" onClick={() => onEdit(index)}>
+                      <button className="table__btn edit" onClick={() => onEdit(row)}>
                         Edit
                       </button>
                     )}
                     {onDelete && (
-                      <button className="table__btn delete" onClick={() => onDelete(index)}>
+                      <button className="table__btn delete" onClick={() => onDelete(row)}>
                         Delete
                       </button>
                     )}

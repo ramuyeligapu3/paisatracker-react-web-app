@@ -59,6 +59,7 @@ function TransactionsPage() {
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState('success');
 
   useEffect(() => {
     fetchTransactions();
@@ -70,6 +71,7 @@ function TransactionsPage() {
       const userId = localStorage.getItem("userId");
 
       if (!userId) {
+        setToastType("error");
         setToastMessage("User not logged in");
         setShowToast(true);
         return;
@@ -84,17 +86,16 @@ function TransactionsPage() {
         limit: transactionsPerPage
       };
       const response = await getTransactions(params);
-        const { transactions, total } = response.data || response;
-        console.log("((((((((((response",response)
-
-        setTransactions(transactions);
-        setTotalCount(total); // <-- you need to define this in your component's state
-      } catch (err) {
-        setToastMessage("Failed to load transactions");
-        setShowToast(true);
-      } finally {
-        setLoading(false);
-      }
+      const { transactions, total } = response.data || response;
+      setTransactions(transactions);
+      setTotalCount(total);
+    } catch (err) {
+      setToastType("error");
+      setToastMessage("Failed to load transactions");
+      setShowToast(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const totalIncome = transactions.reduce(
@@ -115,6 +116,7 @@ function TransactionsPage() {
   const openEditModal = (transaction) => {
     setModalType('edit');
     setSelectedTransaction(transaction);
+    console.log("((((((((((((((((((update data ",transaction);
 
     setTransactionForm({
       date: transaction.date?.substring(0, 10) || '',
@@ -148,15 +150,18 @@ function TransactionsPage() {
 
       if (modalType === 'add') {
         await createTransaction(formatted);
+        setToastType("success");
         setToastMessage("Transaction added successfully");
       } else {
         await updateTransaction(selectedTransaction.id, formatted);
+        setToastType("success");
         setToastMessage("Transaction updated successfully");
       }
 
       closeModal();
       await fetchTransactions();
     } catch (err) {
+      setToastType("error");
       setToastMessage("Error saving transaction");
     } finally {
       setShowToast(true);
@@ -167,9 +172,11 @@ function TransactionsPage() {
   const handleDelete = async (transaction) => {
     try {
       await deleteTransaction(transaction.id);
+      setToastType("success");
       setToastMessage("Transaction deleted");
       await fetchTransactions();
     } catch (err) {
+      setToastType("error");
       setToastMessage("Error deleting transaction");
     } finally {
       setShowToast(true);
@@ -178,8 +185,7 @@ function TransactionsPage() {
   };
 
   const totalPages = Math.ceil(totalCount / transactionsPerPage);
-const currentTransactions = transactions; // It's already paginated from the backend
-
+  const currentTransactions = transactions;
 
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
@@ -234,7 +240,7 @@ const currentTransactions = transactions; // It's already paginated from the bac
         onPageChange={handlePageChange}
       />
 
-      <Toast show={showToast} message={toastMessage} />
+      <Toast show={showToast} message={toastMessage} type={toastType} />
     </div>
   );
 }
