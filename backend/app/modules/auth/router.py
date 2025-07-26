@@ -15,7 +15,7 @@ async def signup(user: UserCreate, service: AuthService = Depends(get_auth_servi
 @auth_router.post("/login")
 async def login(credentials: UserLogin, service: AuthService = Depends(get_auth_service)):
     user = await service.authenticate(credentials)
-    res=ORJSONResponse(status_code=200, content=response(True, {"userId":user.userId,"accessToken":user.accessToken}, "Login Successful"))
+    res=ORJSONResponse(status_code=200, content=response(True, {"userId":user.get("userId"),"accessToken":user.get("accessToken")}, "Login Successful"))
     res.set_cookie(
             key="refreshToken",
             value=user["refreshToken"],
