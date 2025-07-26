@@ -29,4 +29,5 @@ class AuthService:
         return {
             "userId": str(user.id),
             "accessToken": access_token,
+            "refreshToken": refresh_token
         }
