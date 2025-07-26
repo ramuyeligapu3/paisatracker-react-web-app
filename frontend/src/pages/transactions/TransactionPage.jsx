@@ -1,131 +1,151 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import Card from "../../components/Card";
 import TransactionForm from "./TransactionForm";
 import Table from "../../components/Table";
-import Filters from '../../components/Filters';
-import Pagination from '../../components/Pagination';
-import Toast from '../../components/Toast';
-import './TransactionPage.css';
+import Filters from "../../components/Filters";
+import Pagination from "../../components/Pagination";
+import Toast from "../../components/Toast";
+import "./TransactionPage.css";
 
 import {
   getTransactions,
   createTransaction,
   updateTransaction,
-  deleteTransaction
-} from '../../services/api';
+  deleteTransaction,
+} from "../../services/api";
 
 const categoryOptions = [
-  'Food & Dining', 'Income', 'Transportation', 'Entertainment', 'Bills & Utilities'
+  "Food & Dining",
+  "Income",
+  "Transportation",
+  "Entertainment",
+  "Bills & Utilities",
 ];
 
 const accountOptions = [
-  'Checking Account', 'Savings Account', 'Credit Card'
+  "Checking Account",
+  "Savings Account",
+  "Credit Card",
 ];
 
 const dynamicColumns = [
-  { key: 'date', label: 'Date' },
-  { key: 'description', label: 'Description' },
-  { key: 'category', label: 'Category' },
-  { key: 'account', label: 'Account' },
+  { key: "date", label: "Date" },
+  { key: "description", label: "Description" },
+  { key: "category", label: "Category" },
+  { key: "account", label: "Account" },
   {
-    key: 'amount',
-    label: 'Amount',
-    align: 'right',
+    key: "amount",
+    label: "Amount",
+    align: "right",
     render: (value) =>
       value < 0
         ? `-₹${Math.abs(value).toLocaleString()}`
-        : `+₹${value.toLocaleString()}`
-  }
+        : `+₹${value.toLocaleString()}`,
+  },
 ];
 
 function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('All Categories');
-  const [accountFilter, setAccountFilter] = useState('All Accounts');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All Categories");
+  const [accountFilter, setAccountFilter] = useState("All Accounts");
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
 
   const transactionsPerPage = 5;
 
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState('add');
+  const [modalType, setModalType] = useState("add");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [transactionForm, setTransactionForm] = useState({
-    date: '', description: '', category: categoryOptions[0],
-    account: accountOptions[0], amount: ''
+    date: "",
+    description: "",
+    category: categoryOptions[0],
+    account: accountOptions[0],
+    amount: "",
   });
 
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState('success');
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [searchTerm, categoryFilter, accountFilter, currentPage]);
+  /** ✅ Show toast helper */
+  const showToastMsg = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "" }), 3000);
+  };
 
-  const fetchTransactions = async () => {
+  /** ✅ Fetch Transactions */
+  const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
       const userId = localStorage.getItem("userId");
 
       if (!userId) {
-        setToastType("error");
-        setToastMessage("User not logged in");
-        setShowToast(true);
+        showToastMsg("User not logged in", "error");
         return;
       }
 
       const params = {
         userId,
         search: searchTerm,
-        category: categoryFilter !== 'All Categories' ? categoryFilter : '',
-        account: accountFilter !== 'All Accounts' ? accountFilter : '',
+        category: categoryFilter !== "All Categories" ? categoryFilter : "",
+        account: accountFilter !== "All Accounts" ? accountFilter : "",
         page: currentPage,
-        limit: transactionsPerPage
+        limit: transactionsPerPage,
       };
+
       const response = await getTransactions(params);
-      const { transactions, total } = response.data || response;
-      setTransactions(transactions);
-      setTotalCount(total);
+      const data = response.data || response;
+
+      setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
+      setTotalCount(data.total || 0);
     } catch (err) {
-      setToastType("error");
-      setToastMessage("Failed to load transactions");
-      setShowToast(true);
+      console.error("Error fetching transactions:", err);
+      showToastMsg("Failed to load transactions", "error");
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, categoryFilter, accountFilter, currentPage]);
 
+  /** ✅ Initial + dependency-based fetch */
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  /** ✅ Summary Calculations */
   const totalIncome = transactions.reduce(
-    (sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum), 0);
+    (sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum),
+    0
+  );
   const totalExpenses = transactions.reduce(
-    (sum, tx) => (tx.amount < 0 ? sum + tx.amount : sum), 0);
+    (sum, tx) => (tx.amount < 0 ? sum + tx.amount : sum),
+    0
+  );
   const netBalance = totalIncome + totalExpenses;
 
+  /** ✅ Modal Handlers */
   const openAddModal = () => {
-    setModalType('add');
+    setModalType("add");
     setTransactionForm({
-      date: '', description: '', category: categoryOptions[0],
-      account: accountOptions[0], amount: ''
+      date: "",
+      description: "",
+      category: categoryOptions[0],
+      account: accountOptions[0],
+      amount: "",
     });
     setShowModal(true);
   };
 
   const openEditModal = (transaction) => {
-    setModalType('edit');
+    setModalType("edit");
     setSelectedTransaction(transaction);
-    console.log("((((((((((((((((((update data ",transaction);
-
     setTransactionForm({
-      date: transaction.date?.substring(0, 10) || '',
-      description: transaction.description || '',
+      date: transaction.date?.substring(0, 10) || "",
+      description: transaction.description || "",
       category: transaction.category || categoryOptions[0],
       account: transaction.account || accountOptions[0],
-      amount: transaction.amount?.toString() || '',
+      amount: transaction.amount?.toString() || "",
     });
-
     setShowModal(true);
   };
 
@@ -134,62 +154,54 @@ function TransactionsPage() {
     setSelectedTransaction(null);
   };
 
+  /** ✅ Form Change */
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setTransactionForm({ ...transactionForm, [name]: value });
   };
 
+  /** ✅ Save Transaction */
   const handleSave = async () => {
     try {
       const userId = localStorage.getItem("userId");
       const formatted = {
         ...transactionForm,
         amount: parseFloat(transactionForm.amount),
-        user_id: userId
+        user_id: userId,
       };
 
-      if (modalType === 'add') {
+      if (modalType === "add") {
         await createTransaction(formatted);
-        setToastType("success");
-        setToastMessage("Transaction added successfully");
+        showToastMsg("Transaction added successfully");
       } else {
         await updateTransaction(selectedTransaction.id, formatted);
-        setToastType("success");
-        setToastMessage("Transaction updated successfully");
+        showToastMsg("Transaction updated successfully");
       }
 
       closeModal();
       await fetchTransactions();
     } catch (err) {
-      setToastType("error");
-      setToastMessage("Error saving transaction");
-    } finally {
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      console.error("Error saving transaction:", err);
+      showToastMsg("Error saving transaction", "error");
     }
   };
 
+  /** ✅ Delete Transaction */
   const handleDelete = async (transaction) => {
     try {
       await deleteTransaction(transaction.id);
-      setToastType("success");
-      setToastMessage("Transaction deleted");
+      showToastMsg("Transaction deleted");
       await fetchTransactions();
     } catch (err) {
-      setToastType("error");
-      setToastMessage("Error deleting transaction");
-    } finally {
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      console.error("Error deleting transaction:", err);
+      showToastMsg("Error deleting transaction", "error");
     }
   };
 
+  /** ✅ Pagination */
   const totalPages = Math.ceil(totalCount / transactionsPerPage);
-  const currentTransactions = transactions;
-
   const handlePageChange = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
   return (
@@ -227,7 +239,7 @@ function TransactionsPage() {
       />
 
       <Table
-        data={currentTransactions}
+        data={transactions}
         onEdit={openEditModal}
         onDelete={handleDelete}
         columns={dynamicColumns}
@@ -240,7 +252,7 @@ function TransactionsPage() {
         onPageChange={handlePageChange}
       />
 
-      <Toast show={showToast} message={toastMessage} type={toastType} />
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </div>
   );
 }

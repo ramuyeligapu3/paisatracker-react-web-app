@@ -1,42 +1,43 @@
-from pydantic import BaseModel, EmailStr
-from beanie import Document, init_beanie
-from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import EmailStr
-from datetime import datetime
-from typing import Optional
-
-from beanie import PydanticObjectId
-
-
-from beanie import Document, Link
-from pydantic import BaseModel, EmailStr
-from datetime import datetime
-from typing import Optional
-from motor.motor_asyncio import AsyncIOMotorClient
-from beanie import PydanticObjectId
 import os
+from datetime import datetime
+from typing import Optional
+
 from dotenv import load_dotenv
-load_dotenv()
+from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import BaseModel, EmailStr
+from beanie import Document, init_beanie, Link
 
-MONGO_URI = os.getenv("MONGO_URI", "").strip()
-if not MONGO_URI:
-    raise Exception("MONGO_URI environment variable is missing")
+# # 🌱 Load environment variables
+# load_dotenv()
 
-client = AsyncIOMotorClient(MONGO_URI)
-db = client.get_default_database()  # picks `paisaatracker_db` from URI
+# # 🔗 MongoDB connection
+# MONGO_URI = os.getenv("MONGO_URI", "").strip()
+# if not MONGO_URI:
+#     raise Exception("MONGO_URI environment variable is missing")
+
+# client = AsyncIOMotorClient(
+#     MONGO_URI,
+#     connectTimeoutMS=5000
+# )
 
 
+# db = client.get_default_database()  # will be `paisaatracker_db` if specified in URI
+
+# ---------------- Models ----------------
 
 class UserModel(Document):
     email: EmailStr
     password_hash: str
 
     class Settings:
-        collection = "users"
+        name = "users"
+        indexes = [
+            "email",  # 📌 Index for faster login lookup
+        ]
 
 
 class TransactionModel(Document):
-    user_id: Link[UserModel]  # 🟢 Use Link for reference
+    user_id: Link[UserModel]
     amount: float
     category: str
     account: Optional[str] = None
@@ -44,7 +45,13 @@ class TransactionModel(Document):
     description: Optional[str] = None
 
     class Settings:
-        collection = "transactions"
+        name = "transactions"
+        indexes = [
+            "user_id",           # 🔍 for user filtering
+            "date",              # 📅 for sorting
+            "category",          # 🗂 for filtering
+            [("user_id", 1), ("date", -1)]  # 🧠 compound: get user transactions by date desc
+        ]
 
-# --- Register Models ---
+# ✅ Register Beanie models
 document_models = [UserModel, TransactionModel]

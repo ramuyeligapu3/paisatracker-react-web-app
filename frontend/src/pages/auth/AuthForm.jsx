@@ -24,6 +24,12 @@ const AuthForm = ({ view, onSwitchView }) => {
    
 
   };
+
+  function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? match[2] : null;
+}
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -35,10 +41,14 @@ const handleSubmit = async (e) => {
       
       console.log(res)
       if (res.success) {
+
+        const csrfToken = getCookie('refreshToken');
+        console.log("refreshToken:", csrfToken);
+
        
         showToast(res.message, 'success');
         setTimeout(() => {
-          authLogin(res.data.userId);
+          authLogin(res.data.userId,res.data.accessToken);
           navigate('/');
         }, 3000); // wait for toast to be visible
       }
