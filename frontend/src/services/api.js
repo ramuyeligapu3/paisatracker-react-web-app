@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const BASE_URL = 'http://localhost:8000';
+// const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'http://paisaatracker.onrender.com';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -35,10 +36,7 @@ api.interceptors.response.use(
       try {
         // Call refresh endpoint (cookies will be sent automatically)
         const res = await axios.post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true });
-        console.log("(((((((((((((((((((res",res);
-
         const newAccessToken = res.data.data.accessToken;
-        console.log("((((((((((((((((((newAccessToken))))))))))))))))))))",newAccessToken);
         if (newAccessToken) {
           localStorage.setItem('accessToken', newAccessToken);
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
