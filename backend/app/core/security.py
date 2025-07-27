@@ -6,7 +6,7 @@ from .exceptions import AppException
 
 SECRET_KEY = "f4d8aab3a6f8a66d21b2c845a4ec93fef924cbe87e4f1eaf0d5fa9f7e4bcf4d6"  # Use env var in production
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 5
+ACCESS_TOKEN_EXPIRE_MINUTES = 1
 REFRESH_TOKEN_EXPIRE_DAYS = 30
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):

@@ -2,7 +2,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import React, { useState } from 'react';
 import './AuthForm.css';
 import Toast from '../../components/Toast';
-import { login, signup, forgotPassword } from '../../services/api'; // Adjust path if needed
+import { login, signup, forgotPassword } from '../../apis/authApi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext'; // adjust path if needed
 

@@ -22,7 +22,7 @@ class AuthService:
            raise AppException(message="Invalid credentilas", status_code=400)
         access_token = create_access_token(
             data={"sub": str(user.id), "email": user.email},
-            expires_delta=timedelta(minutes=5)
+            expires_delta=timedelta(minutes=2)
         )
         refresh_token = create_refresh_token({"sub": str(user.id)})
 

@@ -15,21 +15,16 @@ const App = () => {
     <>
       {/* ✅ ToastContainer must be outside Routes */}
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" replace /> : <AuthPage />} />
-
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }
-        >
+      <Route path="/login" element={user ? <Navigate to="/" replace /> : <AuthPage />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<DashboardPage />} />
           <Route path="transactions" element={<TransactionPage />} />
           <Route path="logout" element={<LogoutPage />} />
         </Route>
-      </Routes>
+      </Route>
+    </Routes>
+
     </>
   );
 };

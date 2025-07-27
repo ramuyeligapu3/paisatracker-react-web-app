@@ -6,13 +6,7 @@ import Filters from "../../components/Filters";
 import Pagination from "../../components/Pagination";
 import Toast from "../../components/Toast";
 import "./TransactionPage.css";
-
-import {
-  getTransactions,
-  createTransaction,
-  updateTransaction,
-  deleteTransaction,
-} from "../../services/api";
+import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../../apis/transactionApi';
 
 const categoryOptions = [
   "Food & Dining",
