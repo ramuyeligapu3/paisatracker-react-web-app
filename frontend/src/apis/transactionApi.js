@@ -12,3 +12,6 @@ export const updateTransaction = (id, transactionData) =>
 
 export const deleteTransaction = (id) =>
   api.delete(`/api/transactions/${id}`).then(res => res.data);
+
+export const getMonthlySummary = (userId) =>
+  api.get(`/api/transactions/monthly_summary/${userId}`).then(res => res.data);

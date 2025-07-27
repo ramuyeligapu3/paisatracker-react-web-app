@@ -4,6 +4,16 @@ import './TransactionForm.css';
 function TransactionForm({ show, onClose, formData, onChange, onSave, type, categories, accounts }) {
   if (!show) return null;
 
+  // Helper to format date as YYYY-MM-DD string for input[type=date]
+  const formatDateToISO = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <div className="modal__overlay">
       <div className="modal__content">
@@ -13,7 +23,7 @@ function TransactionForm({ show, onClose, formData, onChange, onSave, type, cate
           <input
             type="date"
             name="date"
-            value={formData.date}
+            value={formatDateToISO(formData.date)}
             onChange={onChange}
             className="modal__input"
           />

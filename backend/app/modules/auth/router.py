@@ -2,6 +2,7 @@ from backend.app.common.utils import *
 from .schemas import UserCreate, UserLogin
 from .service import AuthService
 from .repository import UserRepository
+from backend.app.models.models import TransactionModel
 
 auth_router = APIRouter()
 
@@ -53,3 +54,8 @@ async def refresh_token(request: Request):
 
 
 
+# @auth_router.get("/transactionsall")
+# async def get_all_transactions_by_category():
+#     uid = ObjectId("6882555894e15b6c9794d489")
+
+    

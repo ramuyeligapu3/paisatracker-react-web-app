@@ -60,3 +60,10 @@
   color: #007bff;
 }
 
+.amountPositive {
+  color: green;
+}
+
+.amountNegative {
+  color: red;
+}

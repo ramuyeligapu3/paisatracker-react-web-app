@@ -6,7 +6,13 @@ import Filters from "../../components/Filters";
 import Pagination from "../../components/Pagination";
 import Toast from "../../components/Toast";
 import "./TransactionPage.css";
-import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../../apis/transactionApi';
+import {
+  getTransactions,
+  createTransaction,
+  updateTransaction,
+  deleteTransaction,
+  getMonthlySummary,
+} from "../../apis/transactionApi";
 
 const categoryOptions = [
   "Food & Dining",
@@ -46,6 +52,7 @@ function TransactionsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
+  const [summary, setSummary] = useState(null);
 
   const transactionsPerPage = 5;
 
@@ -62,13 +69,13 @@ function TransactionsPage() {
 
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
-  /** ✅ Show toast helper */
+  /** Show toast helper */
   const showToastMsg = (message, type = "success") => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ show: false, message: "", type: "" }), 3000);
   };
 
-  /** ✅ Fetch Transactions */
+  /** Fetch Transactions */
   const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
@@ -101,23 +108,42 @@ function TransactionsPage() {
     }
   }, [searchTerm, categoryFilter, accountFilter, currentPage]);
 
-  /** ✅ Initial + dependency-based fetch */
+  /** Fetch Monthly Summary */
+  const fetchSummary = useCallback(async () => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+
+    try {
+      const res = await getMonthlySummary(userId);
+      if (res.success) {
+        setSummary(res.data);
+      } else {
+        console.error("API error", res.message);
+      }
+    } catch (err) {
+      console.error("Failed to fetch summary", err);
+    }
+  }, []);
+
+  /** Initial fetch calls */
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  /** ✅ Summary Calculations */
-  const totalIncome = transactions.reduce(
-    (sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum),
-    0
-  );
-  const totalExpenses = transactions.reduce(
-    (sum, tx) => (tx.amount < 0 ? sum + tx.amount : sum),
-    0
-  );
-  const netBalance = totalIncome + totalExpenses;
+  useEffect(() => {
+    fetchSummary();
+  }, [fetchSummary]);
 
-  /** ✅ Modal Handlers */
+  const {
+    totalIncome = 0,
+    totalExpenses = 0,
+    netBalance = 0,
+    incomeChange = 0,
+    expensesChange = 0,
+    balanceChange = 0,
+  } = summary || {};
+
+  /** Modal handlers */
   const openAddModal = () => {
     setModalType("add");
     setTransactionForm({
@@ -148,13 +174,13 @@ function TransactionsPage() {
     setSelectedTransaction(null);
   };
 
-  /** ✅ Form Change */
+  /** Form change handler */
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setTransactionForm({ ...transactionForm, [name]: value });
   };
 
-  /** ✅ Save Transaction */
+  /** Save transaction (add or update) */
   const handleSave = async () => {
     try {
       const userId = localStorage.getItem("userId");
@@ -174,25 +200,31 @@ function TransactionsPage() {
 
       closeModal();
       await fetchTransactions();
+
+      // Refresh summary after saving
+      await fetchSummary();
     } catch (err) {
       console.error("Error saving transaction:", err);
       showToastMsg("Error saving transaction", "error");
     }
   };
 
-  /** ✅ Delete Transaction */
+  /** Delete transaction */
   const handleDelete = async (transaction) => {
     try {
       await deleteTransaction(transaction.id);
       showToastMsg("Transaction deleted");
       await fetchTransactions();
+
+      // Refresh summary after deleting
+      await fetchSummary();
     } catch (err) {
       console.error("Error deleting transaction:", err);
       showToastMsg("Error deleting transaction", "error");
     }
   };
 
-  /** ✅ Pagination */
+  /** Pagination */
   const totalPages = Math.ceil(totalCount / transactionsPerPage);
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
@@ -216,9 +248,9 @@ function TransactionsPage() {
       />
 
       <div className="summary-cards">
-        <Card title="Total Income" amount={totalIncome} color="green" />
-        <Card title="Total Expenses" amount={totalExpenses} color="red" />
-        <Card title="Net Balance" amount={netBalance} color="blue" />
+        <Card title="Total Income" amount={totalIncome} change={incomeChange} color="green" />
+        <Card title="Total Expenses" amount={totalExpenses} change={expensesChange} color="red" />
+        <Card title="Net Balance" amount={netBalance} change={balanceChange} color={netBalance >= 0 ? "green" : "red"} />
       </div>
 
       <TransactionForm

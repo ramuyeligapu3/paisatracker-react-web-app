@@ -36,4 +36,23 @@ class TransactionService:
         if not tx:
             raise AppException("Transaction not found", 404)
         return await self.repo.delete_transaction(tx)
+    
+    async def get_monthly_summary(self,user_id:str):
+        summery=await self.repo.get_monthly_summary_with_change(user_id)
+        if summery:
+                return summery[0]
+        else:
+            return {
+                "totalIncome": 0,
+                "totalExpenses": 0,
+                "netBalance": 0,
+                "incomeChange": None,
+                "expensesChange": None,
+                "balanceChange": None,
+            }
+    async def get_current_month_category_distribution(self,user_id:str):
+        summery=await self.repo.get_current_month_category_distribution(user_id)
+        return summery
+            
+
        
