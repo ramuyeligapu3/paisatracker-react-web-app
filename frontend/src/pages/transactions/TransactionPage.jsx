@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useLocation } from 'react-router-dom';
 import Card from "../../components/Card";
 import TransactionForm from "./TransactionForm";
 import Table from "../../components/Table";
@@ -45,6 +46,7 @@ const dynamicColumns = [
 ];
 
 function TransactionsPage() {
+  const location = useLocation();
   const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
@@ -133,6 +135,12 @@ function TransactionsPage() {
   useEffect(() => {
     fetchSummary();
   }, [fetchSummary]);
+
+  useEffect(() => {
+    if (location.state?.openAddModal) {
+      openAddModal();
+    }
+  }, [location.state]);
 
   const {
     totalIncome = 0,

@@ -58,15 +58,20 @@ class TransactionRepository:
         await transaction.delete()
 
 
-    async def get_monthly_summary_with_change(self, user_id: str):
+    async def get_monthly_summary_with_change(self, user_id: str, month: int = None, year: int = None):
             uid = ObjectId(user_id)
 
             now = datetime.now()
-            this_month_start = datetime(now.year, now.month, 1)
-            if now.month == 1:
-                last_month_start = datetime(now.year - 1, 12, 1)
+            if month is None:
+                month = now.month
+            if year is None:
+                year = now.year
+
+            this_month_start = datetime(year, month, 1)
+            if month == 1:
+                last_month_start = datetime(year - 1, 12, 1)
             else:
-                last_month_start = datetime(now.year, now.month - 1, 1)
+                last_month_start = datetime(year, month - 1, 1)
 
             pipeline = [
                 {"$match": {"user_id.$id": uid}},  # Match by user_id ObjectId
@@ -207,10 +212,14 @@ class TransactionRepository:
             cursor = collection.aggregate(pipeline)
             results = await cursor.to_list(length=1)
             return results
-    async def get_current_month_category_distribution(self, user_id: str):
+    async def get_current_month_category_distribution(self, user_id: str, month: int = None, year: int = None):
         uid = ObjectId(user_id)
         now = datetime.now()
-        this_month_start = datetime(now.year, now.month, 1)
+        if month is None:
+            month = now.month
+        if year is None:
+            year = now.year
+        this_month_start = datetime(year, month, 1)
         pipeline = [
             {"$match": {"user_id.$id": uid, "date": {"$gte": this_month_start}}},
             {

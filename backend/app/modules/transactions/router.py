@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import StreamingResponse
 from .schemas import TransactionCreate, TransactionUpdate, TransactionListResponse
 from .service import TransactionService
 from .repository import TransactionRepository
+from .export import csv_generator
 from backend.app.common.utils import *
+from datetime import datetime
 
 transaction_router = APIRouter()
 
@@ -58,21 +61,38 @@ async def delete_transaction(
             content=response(True, message="Transaction deleted")
         )
 @transaction_router.get("/transactions/monthly_summary/{userId}")
-async def transactions_monthly_summary(userId: str, service: TransactionService = Depends(get_transaction_service)):
-    res = await service.get_monthly_summary(userId)
+async def transactions_monthly_summary(userId: str, month: int = None, year: int = None, service: TransactionService = Depends(get_transaction_service)):
+    res = await service.get_monthly_summary(userId, month, year)
     return ORJSONResponse(
         status_code=200,
         content=response(True, res, message="Monthly summary fetched")
     )
 @transaction_router.get("/transactions/category_distribution/{userId}")
-async def current_month_category_distribution(userId: str, service: TransactionService = Depends(get_transaction_service)):
-    res = await service.get_current_month_category_distribution(userId)
+async def current_month_category_distribution(userId: str, month: int = None, year: int = None, service: TransactionService = Depends(get_transaction_service)):
+    res = await service.get_current_month_category_distribution(userId, month, year)
     return ORJSONResponse(
         status_code=200,
         content=response(True, res, message="Monthly summary fetched")
     )
 
+@transaction_router.get("/export-transactions")
+async def export_transactions(
+    current_user: str = Depends(get_current_user),
+    start_date: str = Query(None),
+    end_date: str = Query(None)
+):
+    start_dt = None
+    end_dt = None
+    if start_date:
+        start_dt = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+    if end_date:
+        end_dt = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
     
+    return StreamingResponse(
+        csv_generator(current_user, start_dt, end_dt),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=transactions.csv"}
+    )
 
     
 

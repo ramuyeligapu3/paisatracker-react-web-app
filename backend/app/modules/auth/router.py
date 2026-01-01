@@ -11,7 +11,14 @@ def get_auth_service():
 
 @auth_router.post("/signup")
 async def signup(user: UserCreate, service: AuthService = Depends(get_auth_service)):
-    return await service.register(user)
+    res= await service.register(user)
+    print(res,'(((((((((((((((((((((((((((((((signup)))))))))))))))))))))))))))))))')
+
+    return ORJSONResponse(
+        status_code=200,
+        content=response(True,None, "User created successfull")
+    )
+
    
 @auth_router.post("/login")
 async def login(credentials: UserLogin, service: AuthService = Depends(get_auth_service)):
@@ -42,8 +49,7 @@ async def refresh_token(request: Request):
         raise AppException(message="Invalid token",status_code=401)
 
     new_access_token = create_access_token(
-        data={"sub": user_id},
-        expires_delta=timedelta(minutes=30)
+        data={"sub": user_id}
     )
     print("((((((((((((((((((((((new_access_token))))))))))))))))))))))",new_access_token)
 

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { getAccessToken, setAccessToken, clearAuthData } from '../utils/authUtils';
 
 const BASE_URL = 'https://paisaatracker.onrender.com';
-// const BASE_URL = 'http://localhost:8000';
+// const BASE_URL = 'http://127.0.0.1:8000';
 
 const api = axios.create({
   baseURL: BASE_URL,

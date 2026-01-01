@@ -20,9 +20,36 @@
 }
 
 .dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 20px;
+}
+
+.dashboard-header span {
+  margin: 0;
+}
+
+.dashboard-filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dashboard-filters select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dashboard-filters select:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 .stats {

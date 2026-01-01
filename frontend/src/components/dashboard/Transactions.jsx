@@ -1,23 +1,23 @@
 import React from "react";
 
-const transactions = [
-  { name: "Grocery Shopping", date: "Jan 15, 2025", amount: "-₹2,450" },
-  { name: "Salary Credit", date: "Jan 14, 2025", amount: "+₹25,000" },
-  { name: "Fuel", date: "Jan 13, 2025", amount: "-₹1,200" },
-];
-
-const Transactions = () => (
+const Transactions = ({ transactions }) => (
   <div className="transactions">
     <div className="section-title">Recent Transactions</div>
-    {transactions.map((t, index) => (
-      <div key={index} className="transaction">
-        <div className="transaction-details">
-          <div className="transaction-name">{t.name}</div>
-          <div className="transaction-date">{t.date}</div>
+    {transactions.length > 0 ? (
+      transactions.map((t, index) => (
+        <div key={t.id || index} className="transaction">
+          <div className="transaction-details">
+            <div className="transaction-name">{t.description}</div>
+            <div className="transaction-date">{new Date(t.date).toLocaleDateString()}</div>
+          </div>
+          <div className="transaction-amount">
+            {t.amount < 0 ? `-₹${Math.abs(t.amount).toLocaleString()}` : `+₹${t.amount.toLocaleString()}`}
+          </div>
         </div>
-        <div className="transaction-amount">{t.amount}</div>
-      </div>
-    ))}
+      ))
+    ) : (
+      <div className="no-transactions">No recent transactions</div>
+    )}
   </div>
 );
 
