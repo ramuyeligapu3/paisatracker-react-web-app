@@ -1,11 +1,16 @@
+import calendar
+from datetime import datetime
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import StreamingResponse
+
+from backend.app.common.utils import *
+from backend.app.core.config import settings
+from backend.app.core.email import send_email, render_monthly_summary_html
+from backend.app.modules.auth.repository import UserRepository
+from .export import csv_generator
+from .repository import TransactionRepository
 from .schemas import TransactionCreate, TransactionUpdate, TransactionListResponse
 from .service import TransactionService
-from .repository import TransactionRepository
-from .export import csv_generator
-from backend.app.common.utils import *
-from datetime import datetime
 
 transaction_router = APIRouter()
 
@@ -94,5 +99,49 @@ async def export_transactions(
         headers={"Content-Disposition": "attachment; filename=transactions.csv"}
     )
 
-    
+
+@transaction_router.post("/send-monthly-summary")
+async def send_monthly_summary_email(
+    current_user: str = Depends(get_current_user),
+    month: int = Query(None),
+    year: int = Query(None),
+    transaction_service: TransactionService = Depends(get_transaction_service),
+):
+    user_repo = UserRepository()
+    user = await user_repo.get_by_id(current_user)
+    if not user:
+        return ORJSONResponse(status_code=404, content=response(False, message="User not found"))
+    now = datetime.now()
+    m = month or now.month
+    y = year or now.year
+    summary = await transaction_service.get_monthly_summary(current_user, m, y)
+    category_dist = await transaction_service.get_current_month_category_distribution(current_user, m, y)
+    month_name = f"{calendar.month_name[m]} {y}"
+    html = render_monthly_summary_html(
+        user_email=user.email,
+        month_name=month_name,
+        total_income=summary.get("totalIncome", 0) or 0,
+        total_expenses=summary.get("totalExpenses", 0) or 0,
+        net_balance=summary.get("netBalance", 0) or 0,
+        income_change=summary.get("incomeChange"),
+        expenses_change=summary.get("expensesChange"),
+        balance_change=summary.get("balanceChange"),
+        category_rows=category_dist or [],
+        app_name=settings.APP_NAME,
+    )
+    sent = send_email(
+        user.email,
+        f"Your {month_name} summary – {settings.APP_NAME}",
+        html,
+    )
+    if not sent:
+        return ORJSONResponse(
+            status_code=503,
+            content=response(False, message="Email is not configured or could not be sent. Please set MAIL_* in .env.")
+        )
+    return ORJSONResponse(
+        status_code=200,
+        content=response(True, message="Monthly summary sent to your email.")
+    )
+
 

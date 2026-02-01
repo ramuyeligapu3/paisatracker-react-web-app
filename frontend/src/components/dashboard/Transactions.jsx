@@ -1,3 +1,4 @@
+// frontend/src/components/dashboard/Transactions.jsx
 import React from "react";
 
 const Transactions = ({ transactions }) => (

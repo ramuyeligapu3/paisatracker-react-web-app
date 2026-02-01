@@ -1,3 +1,4 @@
+// frontend/src/components/Toast.jsx
 import React from 'react';
 import './Toast.css';
 

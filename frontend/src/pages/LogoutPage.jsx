@@ -1,4 +1,4 @@
-// LogoutPage.jsx
+// frontend/src/pages/LogoutPage.jsx
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';

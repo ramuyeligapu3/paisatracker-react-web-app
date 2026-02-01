@@ -1,3 +1,4 @@
+// frontend/src/components/dashboard/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Stats from "./Stats";
@@ -177,7 +178,12 @@ const Dashboard = () => {
 
       <div className="bottom-section">
         <Transactions transactions={recentTransactions} />
-        <Actions onAddTransaction={handleAddTransaction} onExport={handleExport} />
+        <Actions
+          onAddTransaction={handleAddTransaction}
+          onExport={handleExport}
+          currentMonth={selectedMonth}
+          currentYear={selectedYear}
+        />
       </div>
 
       {showExportModal && (

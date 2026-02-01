@@ -1,13 +1,24 @@
+/* frontend/src/index.css */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  /* Removed color-scheme for clarity, you can keep or omit it */
-  /* color-scheme: light dark; */
+  /* App color palette – use across components */
+  --primary-color: #5a9a5a;
+  --primary-hover: #4a8a4a;
+  --secondary-color: #f5deb3;
+  --accent-color: #ff7f50;
+  --accent-hover: #e66f40;
+  --background-color: #f0f2f5;
+  --card-color: #fff;
+  --text-color: #333;
+  --text-muted: #777;
+  --border-radius: 10px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
-  color: rgba(244, 239, 239, 0.87);
-  background-color:  #fff;
+  color: var(--text-color);
+  background-color: var(--background-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -21,18 +32,18 @@ body {
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
-  background-color: var(--background-color, #fff);
+  background-color: var(--background-color);
   /* Set a default background color, can override if needed */
 }
 
 /* Optional base styles */
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--primary-color);
   text-decoration: none;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--accent-color);
 }
 
 h1 {
@@ -41,18 +52,20 @@ h1 {
 }
 
 button {
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--primary-color);
+  color: #fff;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: background-color 0.25s, border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  background-color: var(--primary-hover);
+  border-color: var(--accent-color);
 }
 button:focus,
 button:focus-visible {
@@ -66,18 +79,17 @@ select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-color:#fff; /* Light grey background */
-  color: #000; /* Black text */
-  border: 1px solid #ccc; /* Light border */
+  background-color: var(--card-color);
+  color: var(--text-color);
+  border: 1px solid #ccc;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   box-sizing: border-box;
 }
 
-/* Optional: Add focus styles for inputs */
 input:focus,
 textarea:focus,
 select:focus {
-  outline: 2px solid  #000;;
+  outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }

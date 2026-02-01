@@ -1,4 +1,6 @@
-.table__wrapper {
+
+/* frontend/src/components/Table.css */
+.table {
   overflow-x: auto;
   margin-bottom: 20px;
 }

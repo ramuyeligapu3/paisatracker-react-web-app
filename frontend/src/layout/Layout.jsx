@@ -1,3 +1,4 @@
+// frontend/src/layout/Layout.jsx
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';

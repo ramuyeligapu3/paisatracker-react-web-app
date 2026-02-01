@@ -1,3 +1,4 @@
+// frontend/src/pages/transactions/TransactionPage.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from 'react-router-dom';
 import Card from "../../components/Card";
@@ -126,6 +127,11 @@ function TransactionsPage() {
       console.error("Failed to fetch summary", err);
     }
   }, []);
+
+  /** Reset to page 1 when filters change */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, categoryFilter, accountFilter]);
 
   /** Initial fetch calls */
   useEffect(() => {

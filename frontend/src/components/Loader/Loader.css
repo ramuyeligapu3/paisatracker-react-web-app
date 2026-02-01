@@ -1,0 +1,47 @@
+/* frontend/src/components/Loader/Loader.css */
+.app-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.app-loader--fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--loader-overlay, rgba(240, 242, 245, 0.95));
+  min-height: 100vh;
+}
+
+.app-loader__spinner {
+  position: relative;
+  width: 56px;
+  height: 56px;
+}
+
+.app-loader__ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--loader-track, rgba(143, 188, 143, 0.25));
+  border-radius: 50%;
+  border-top-color: var(--primary-color, #5a9a5a);
+  border-right-color: var(--accent-color, #ff7f50);
+  animation: app-loader-spin 0.9s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.app-loader__message {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-color, #333);
+  letter-spacing: 0.02em;
+}
+
+@keyframes app-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

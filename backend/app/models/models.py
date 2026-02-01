@@ -28,6 +28,8 @@ from beanie import Document, init_beanie, Link
 class UserModel(Document):
     email: EmailStr
     password_hash: str
+    reset_token: Optional[str] = None
+    reset_token_expires: Optional[datetime] = None
 
     class Settings:
         name = "users"

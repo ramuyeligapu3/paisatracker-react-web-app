@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getAccessToken, setAccessToken, clearAuthData } from '../utils/authUtils';
+import { notifyApiLoading } from '../utils/apiLoading';
 
 const BASE_URL = 'https://paisaatracker.onrender.com';
 // const BASE_URL = 'http://127.0.0.1:8000';
@@ -27,6 +28,7 @@ const processQueue = (error, token = null) => {
 };
 
 api.interceptors.request.use((config) => {
+  notifyApiLoading(1);
   const token = getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -35,8 +37,12 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  response => response,
+  (response) => {
+    notifyApiLoading(-1);
+    return response;
+  },
   async (error) => {
+    notifyApiLoading(-1);
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {

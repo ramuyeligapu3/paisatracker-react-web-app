@@ -1,3 +1,4 @@
+// frontend/src/components/Navbar.jsx
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';

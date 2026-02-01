@@ -1,3 +1,4 @@
+// frontend/src/pages/auth/AuthForm.jsx
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 import React, { useState } from 'react';
 import './AuthForm.css';

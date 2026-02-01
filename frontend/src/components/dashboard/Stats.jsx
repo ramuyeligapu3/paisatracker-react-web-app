@@ -1,3 +1,4 @@
+// frontend/src/components/dashboard/Stats.jsx
 import React from "react";
 
 const Stats = ({ summary }) => {

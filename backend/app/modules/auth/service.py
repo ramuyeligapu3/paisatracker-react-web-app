@@ -1,6 +1,11 @@
+import secrets
+from datetime import datetime, timedelta
+
 from backend.app.common.utils import *
+from backend.app.core.config import settings
+from backend.app.core.email import send_email, render_reset_password_html
 from .repository import UserRepository
-from .schemas import UserCreate, UserLogin
+from .schemas import UserCreate, UserLogin, ForgotPasswordRequest, ResetPasswordRequest
 from backend.app.models.models import UserModel
 
 class AuthService:
@@ -31,3 +36,22 @@ class AuthService:
             "accessToken": access_token,
             "refreshToken": refresh_token
         }
+
+    async def forgot_password(self, email: str) -> None:
+        user = await self.repo.get_by_email(email)
+        if not user:
+            return
+        token = secrets.token_urlsafe(32)
+        expires = datetime.utcnow() + timedelta(hours=1)
+        await self.repo.set_reset_token(email, token, expires)
+        reset_link = f"{settings.FRONTEND_URL.rstrip('/')}/reset-password?token={token}"
+        html = render_reset_password_html(reset_link, settings.APP_NAME)
+        send_email(user.email, f"Reset your password – {settings.APP_NAME}", html)
+
+    async def reset_password(self, token: str, new_password: str) -> None:
+        user = await self.repo.get_by_reset_token(token)
+        if not user:
+            raise AppException(message="Invalid or expired reset link", status_code=400)
+        if not user.reset_token_expires or user.reset_token_expires < datetime.utcnow():
+            raise AppException(message="Reset link has expired", status_code=400)
+        await self.repo.update_password(user, hash_password(new_password))

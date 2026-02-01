@@ -1,3 +1,4 @@
+// frontend/src/components/Filters.jsx
 import React from 'react';
 import './Filters.css';
 

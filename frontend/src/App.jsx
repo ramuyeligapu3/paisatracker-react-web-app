@@ -1,6 +1,8 @@
+// frontend/src/App.jsx
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './pages/auth/AuthPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import TransactionPage from './pages/transactions/TransactionPage';
 import Layout from './layout/Layout';
 import DashboardPage from './pages/DashboardPage';
@@ -13,9 +15,9 @@ const App = () => {
 
   return (
     <>
-      {/* ✅ ToastContainer must be outside Routes */}
       <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <AuthPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<Layout />}>
           <Route index element={<DashboardPage />} />
