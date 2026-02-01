@@ -30,6 +30,8 @@ class UserModel(Document):
     password_hash: str
     reset_token: Optional[str] = None
     reset_token_expires: Optional[datetime] = None
+    display_name: Optional[str] = None
+    currency: Optional[str] = "INR"
 
     class Settings:
         name = "users"
@@ -55,5 +57,19 @@ class TransactionModel(Document):
             [("user_id", 1), ("date", -1)]  # 🧠 compound: get user transactions by date desc
         ]
 
+class BudgetModel(Document):
+    user_id: Link[UserModel]
+    category: str
+    month: int
+    year: int
+    amount: float
+
+    class Settings:
+        name = "budgets"
+        indexes = [
+            [("user_id", 1), ("month", 1), ("year", 1), ("category", 1)],  # unique per user/month/year/category
+        ]
+
+
 # ✅ Register Beanie models
-document_models = [UserModel, TransactionModel]
+document_models = [UserModel, TransactionModel, BudgetModel]

@@ -1,7 +1,7 @@
 // frontend/src/components/dashboard/Charts.jsx
 import React from "react";
 import {
-  PieChart, Pie, Cell, Tooltip, Legend,
+  PieChart, Pie, Cell, Tooltip, Legend, LabelList,
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
@@ -36,7 +36,7 @@ const Charts = ({ data = [], loading }) => {
       <div className="chart">
         <h3>Pie Chart - Expense Categories</h3>
         <ResponsiveContainer width="100%" height="85%">
-          <PieChart>
+          <PieChart margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
             <Pie
               data={pieData}
               dataKey="value"
@@ -45,13 +45,20 @@ const Charts = ({ data = [], loading }) => {
               cy="50%"
               outerRadius={80}
               fill="#8884d8"
-              label
+              label={false}
+              labelLine={false}
             >
               {pieData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
+              <LabelList
+                dataKey="name"
+                position="inside"
+                formatter={(value, entry) => `${entry.value ? (entry.value / pieData.reduce((s, d) => s + d.value, 0) * 100).toFixed(0) : 0}%`}
+                style={{ fontSize: 12, fill: "#fff" }}
+              />
             </Pie>
-            <Tooltip formatter={value => `₹${value}`} />
+            <Tooltip formatter={value => `₹${Number(value).toLocaleString()}`} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>

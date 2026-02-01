@@ -20,8 +20,22 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 def create_refresh_token(data: dict):
     expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
     to_encode = data.copy()
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": expire, "type": "refresh"})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def verify_refresh_token(token: str):
+    """Decode and validate a refresh token; rejects access tokens."""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("type") == "access":
+            raise AppException(message="Use refresh token, not access token", status_code=401)
+        return payload
+    except ExpiredSignatureError:
+        raise AppException(message="Refresh token expired", status_code=401)
+    except JWTError:
+        raise AppException(message="Invalid refresh token", status_code=401)
+
 
 def verify_token(token: str):
     try:

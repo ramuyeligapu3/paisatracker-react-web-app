@@ -52,6 +52,8 @@ function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [accountFilter, setAccountFilter] = useState("All Accounts");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
@@ -94,6 +96,8 @@ function TransactionsPage() {
         search: searchTerm,
         category: categoryFilter !== "All Categories" ? categoryFilter : "",
         account: accountFilter !== "All Accounts" ? accountFilter : "",
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
         page: currentPage,
         limit: transactionsPerPage,
       };
@@ -109,7 +113,7 @@ function TransactionsPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, categoryFilter, accountFilter, currentPage]);
+  }, [searchTerm, categoryFilter, accountFilter, startDate, endDate, currentPage]);
 
   /** Fetch Monthly Summary */
   const fetchSummary = useCallback(async () => {
@@ -131,7 +135,7 @@ function TransactionsPage() {
   /** Reset to page 1 when filters change */
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, categoryFilter, accountFilter]);
+  }, [searchTerm, categoryFilter, accountFilter, startDate, endDate]);
 
   /** Initial fetch calls */
   useEffect(() => {
@@ -256,6 +260,10 @@ function TransactionsPage() {
         setCategoryFilter={setCategoryFilter}
         accountFilter={accountFilter}
         setAccountFilter={setAccountFilter}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
         categoryOptions={categoryOptions}
         accountOptions={accountOptions}
         onAddClick={openAddModal}

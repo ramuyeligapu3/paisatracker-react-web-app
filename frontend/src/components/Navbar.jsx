@@ -1,14 +1,17 @@
 // frontend/src/components/Navbar.jsx
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import './Navbar.css';
 
 const Navbar = ({ sidebarOpen, toggleSidebar, handleMenuClick }) => {
   const location = useLocation();
+  const { isDark, toggleTheme } = useTheme();
 
   const menuItems = [
     { label: 'Dashboard', link: '/', icon: '🏠' },
     { label: 'Transactions', link: '/transactions', icon: '💰' },
+    { label: 'Settings', link: '/settings', icon: '⚙️' },
     { label: 'Logout', link: '/logout', icon: '🚪' },
   ];
 
@@ -20,6 +23,16 @@ const Navbar = ({ sidebarOpen, toggleSidebar, handleMenuClick }) => {
         <div className="bar"></div>
       </div>
       <div className="navbar-title">PaisaTracker</div>
+
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={toggleTheme}
+        title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        aria-label={isDark ? 'Light mode' : 'Dark mode'}
+      >
+        {isDark ? '☀️' : '🌙'}
+      </button>
 
       <div className="nav-large">
         {menuItems.map((item) => (

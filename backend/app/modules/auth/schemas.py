@@ -1,4 +1,6 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
+
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -14,3 +16,8 @@ class ForgotPasswordRequest(BaseModel):
 class ResetPasswordRequest(BaseModel):
     token: str
     new_password: str
+
+
+class ProfileUpdate(BaseModel):
+    display_name: Optional[str] = None
+    currency: Optional[str] = None

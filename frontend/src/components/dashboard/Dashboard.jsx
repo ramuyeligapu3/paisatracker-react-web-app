@@ -6,6 +6,8 @@ import Charts from "./Charts";
 import Transactions from "./Transactions";
 import Actions from "./Actions";
 import ExportModal from "./ExportModal";
+import TipsCard from "./TipsCard";
+import BudgetsCard from "./BudgetsCard";
 import Toast from "../../components/Toast"; // ✅ use your Toast
 import { getMonthlySummary, getCategoryDistribution } from "../../apis/dashboardApi";
 import { getTransactions } from "../../apis/transactionApi";
@@ -161,8 +163,8 @@ const Dashboard = () => {
           </select>
 
           <select value={selectedYear} onChange={(e) => setSelectedYear(+e.target.value)}>
-            {Array.from({ length: 5 }, (_, i) => {
-              const year = new Date().getFullYear() - i;
+            {Array.from({ length: 6 }, (_, i) => {
+              const year = new Date().getFullYear() + 1 - i;
               return (
                 <option key={year} value={year}>
                   {year}
@@ -174,6 +176,13 @@ const Dashboard = () => {
       </div>
 
       <Stats summary={summary} />
+      <div className="dashboard-tips-budgets">
+        <TipsCard summary={summary} />
+        <BudgetsCard
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
+        />
+      </div>
       <Charts data={categoryData} loading={loadingCategories} />
 
       <div className="bottom-section">

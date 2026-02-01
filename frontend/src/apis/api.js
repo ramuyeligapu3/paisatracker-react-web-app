@@ -3,8 +3,8 @@ import { toast } from 'react-toastify';
 import { getAccessToken, setAccessToken, clearAuthData } from '../utils/authUtils';
 import { notifyApiLoading } from '../utils/apiLoading';
 
-const BASE_URL = 'https://paisaatracker.onrender.com';
-// const BASE_URL = 'http://127.0.0.1:8000';
+// const BASE_URL = 'https://paisaatracker.onrender.com';
+const BASE_URL = 'http://127.0.0.1:8000';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -75,8 +75,8 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         clearAuthData();
-        toast.error('Session expired. Please login again.');
-        // Optionally emit event or call logout from context via a callback here
+        const msg = refreshError.response?.data?.message || 'Session expired. Please login again.';
+        toast.error(msg);
         window.location.href = '/login';
         return Promise.reject(refreshError);
       } finally {

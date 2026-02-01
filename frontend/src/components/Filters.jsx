@@ -9,9 +9,13 @@ function Filters({
   setCategoryFilter,
   accountFilter,
   setAccountFilter,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
   categoryOptions,
   accountOptions,
-  onAddClick
+  onAddClick,
 }) {
   return (
     <div className="filters">
@@ -22,7 +26,20 @@ function Filters({
         onChange={(e) => setSearchTerm(e.target.value)}
         className="filters__search"
       />
-
+      <input
+        type="date"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        className="filters__date"
+        title="From date"
+      />
+      <input
+        type="date"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        className="filters__date"
+        title="To date"
+      />
       <select
         value={categoryFilter}
         onChange={(e) => setCategoryFilter(e.target.value)}
@@ -33,7 +50,6 @@ function Filters({
           <option key={cat}>{cat}</option>
         ))}
       </select>
-
       <select
         value={accountFilter}
         onChange={(e) => setAccountFilter(e.target.value)}
@@ -44,7 +60,6 @@ function Filters({
           <option key={acc}>{acc}</option>
         ))}
       </select>
-
       <button className="filters__add-btn" onClick={onAddClick}>
         + Add Transaction
       </button>

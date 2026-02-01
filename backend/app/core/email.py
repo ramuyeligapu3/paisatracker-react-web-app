@@ -1,4 +1,5 @@
 # backend/app/core/email.py
+import asyncio
 import logging
 import smtplib
 from email.mime.text import MIMEText
@@ -49,6 +50,53 @@ def send_email(to: str, subject: str, html_body: str, text_body: Optional[str] =
         except Exception:
             pass
         return False
+
+
+async def send_email_async(to: str, subject: str, html_body: str, text_body: Optional[str] = None) -> bool:
+    """Send email in a thread pool so it does not block the event loop."""
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, lambda: send_email(to, subject, html_body, text_body))
+
+
+def render_welcome_html(user_email: str, app_name: str = "Paisatracker", login_url: str = "") -> str:
+    return f"""
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to {app_name}</title>
+</head>
+<body style="margin:0; padding:0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f0f2f5;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f0f2f5;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" width="100%" style="max-width: 480px; background: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+          <tr>
+            <td style="padding: 40px 32px;">
+              <h1 style="margin: 0 0 8px; font-size: 1.5rem; color: #333;">Welcome to {app_name}</h1>
+              <p style="margin: 0 0 24px; color: #777; font-size: 15px; line-height: 1.5;">
+                Hi! Your account is ready. Track income and expenses, see spending by category, and get monthly summaries.
+              </p>
+              <p style="margin: 0 0 16px; font-size: 14px; color: #555;">
+                <strong>Quick tips:</strong><br/>
+                • Add transactions to see your dashboard fill up<br/>
+                • Use categories to understand where money goes<br/>
+                • Request a monthly summary by email anytime
+              </p>
+              <p style="margin: 24px 0 0;">
+                <a href="{login_url}" style="display: inline-block; padding: 12px 24px; background-color: #5a9a5a; color: #fff; text-decoration: none; border-radius: 10px; font-weight: 600;">Go to dashboard</a>
+              </p>
+              <p style="margin: 16px 0 0; font-size: 12px; color: #999;">Happy tracking!</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+"""
 
 
 def render_reset_password_html(reset_link: str, app_name: str = "Paisatracker") -> str:

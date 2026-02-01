@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from backend.app.common.utils import *
 from backend.app.core.config import settings
-from backend.app.core.email import send_email, render_reset_password_html
+from backend.app.core.email import send_email_async, render_reset_password_html, render_welcome_html
 from .repository import UserRepository
 from .schemas import UserCreate, UserLogin, ForgotPasswordRequest, ResetPasswordRequest
 from backend.app.models.models import UserModel
@@ -27,7 +27,7 @@ class AuthService:
            raise AppException(message="Invalid credentilas", status_code=400)
         access_token = create_access_token(
             data={"sub": str(user.id), "email": user.email},
-            expires_delta=timedelta(minutes=2)
+            expires_delta=timedelta(minutes=30)
         )
         refresh_token = create_refresh_token({"sub": str(user.id)})
 
@@ -46,7 +46,7 @@ class AuthService:
         await self.repo.set_reset_token(email, token, expires)
         reset_link = f"{settings.FRONTEND_URL.rstrip('/')}/reset-password?token={token}"
         html = render_reset_password_html(reset_link, settings.APP_NAME)
-        send_email(user.email, f"Reset your password – {settings.APP_NAME}", html)
+        await send_email_async(user.email, f"Reset your password – {settings.APP_NAME}", html)
 
     async def reset_password(self, token: str, new_password: str) -> None:
         user = await self.repo.get_by_reset_token(token)

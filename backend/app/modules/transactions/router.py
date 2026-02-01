@@ -1,11 +1,12 @@
 import calendar
 from datetime import datetime
+from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import StreamingResponse
 
 from backend.app.common.utils import *
 from backend.app.core.config import settings
-from backend.app.core.email import send_email, render_monthly_summary_html
+from backend.app.core.email import send_email_async, render_monthly_summary_html
 from backend.app.modules.auth.repository import UserRepository
 from .export import csv_generator
 from .repository import TransactionRepository
@@ -36,12 +37,28 @@ async def list_transactions(
     search: str = "",
     category: str = "",
     account: str = "",
+    start_date: Optional[str] = Query(None),
+    end_date: Optional[str] = Query(None),
     page: int = 1,
     limit: int = 10,
-    service: TransactionService = Depends(get_transaction_service)
+    service: TransactionService = Depends(get_transaction_service),
 ):
-   
-    return await service.list_transactions(user_id, search, category, account, page, limit)
+    start_dt = None
+    end_dt = None
+    if start_date:
+        try:
+            start_dt = datetime.fromisoformat(start_date.replace("Z", "+00:00"))
+        except ValueError:
+            pass
+    if end_date:
+        try:
+            end_dt = datetime.fromisoformat(end_date.replace("Z", "+00:00"))
+            end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
+        except ValueError:
+            pass
+    return await service.list_transactions(
+        user_id, search, category, account, start_dt, end_dt, page, limit
+    )
 
 @transaction_router.post("/transactions/{id}")
 async def update_transaction(
@@ -66,14 +83,26 @@ async def delete_transaction(
             content=response(True, message="Transaction deleted")
         )
 @transaction_router.get("/transactions/monthly_summary/{userId}")
-async def transactions_monthly_summary(userId: str, month: int = None, year: int = None, service: TransactionService = Depends(get_transaction_service)):
+async def transactions_monthly_summary(
+    userId: str,
+    month: Optional[int] = Query(None),
+    year: Optional[int] = Query(None),
+    service: TransactionService = Depends(get_transaction_service),
+):
     res = await service.get_monthly_summary(userId, month, year)
     return ORJSONResponse(
         status_code=200,
         content=response(True, res, message="Monthly summary fetched")
     )
+
+
 @transaction_router.get("/transactions/category_distribution/{userId}")
-async def current_month_category_distribution(userId: str, month: int = None, year: int = None, service: TransactionService = Depends(get_transaction_service)):
+async def current_month_category_distribution(
+    userId: str,
+    month: Optional[int] = Query(None),
+    year: Optional[int] = Query(None),
+    service: TransactionService = Depends(get_transaction_service),
+):
     res = await service.get_current_month_category_distribution(userId, month, year)
     return ORJSONResponse(
         status_code=200,
@@ -129,7 +158,7 @@ async def send_monthly_summary_email(
         category_rows=category_dist or [],
         app_name=settings.APP_NAME,
     )
-    sent = send_email(
+    sent = await send_email_async(
         user.email,
         f"Your {month_name} summary – {settings.APP_NAME}",
         html,

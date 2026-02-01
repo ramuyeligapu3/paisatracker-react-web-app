@@ -5,19 +5,22 @@ export const getTransactions = async ({
   search = '',
   category = '',
   account = '',
+  startDate = '',
+  endDate = '',
   page = 1,
   limit = 10,
 }) => {
-  const res = await api.get('/api/transactions', {
-    params: {
-      user_id: userId,
-      search,
-      category,
-      account,
-      page,
-      limit,
-    },
-  });
+  const params = {
+    user_id: userId,
+    search,
+    category,
+    account,
+    page,
+    limit,
+  };
+  if (startDate) params.start_date = startDate;
+  if (endDate) params.end_date = endDate;
+  const res = await api.get('/api/transactions', { params });
   return res.data;
 };
 

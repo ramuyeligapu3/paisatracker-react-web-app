@@ -11,6 +11,7 @@ from backend.app.common.utils import *
 from backend.app.core.database import init_db,client
 from backend.app.modules.auth.router import auth_router
 from backend.app.modules.transactions.router import transaction_router
+from backend.app.modules.budgets.router import budget_router
 from backend.app.core.exceptions import *
 import traceback
 # from backend.app.controller.auth_router import auth_router
@@ -58,22 +59,19 @@ app.add_middleware(
 # === Routers ===
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(transaction_router, prefix="/api", tags=["transactions"], dependencies=[Depends(get_current_user)])
-
-
-def response(success: bool,message: str = ""):
-    return {"success": success,"message": message}
+app.include_router(budget_router, prefix="/api", tags=["budgets"], dependencies=[Depends(get_current_user)])
 
 
 @app.exception_handler(AppException)
 async def app_exception_handler(request: Request, exc: AppException):
     return ORJSONResponse(
         status_code=exc.status_code,
-        content=response(False, exc.message)
+        content={"success": False, "data": None, "message": exc.message},
     )
 
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     # print("Full Traceback:\n", traceback.format_exc())
-    return ORJSONResponse(status_code=500, content=response(False,"Internal Server Error"))
+    return ORJSONResponse(status_code=500, content={"success": False, "data": None, "message": "Internal Server Error"})
 

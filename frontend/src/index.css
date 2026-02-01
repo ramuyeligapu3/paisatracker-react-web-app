@@ -21,6 +21,21 @@
   background-color: var(--background-color);
 
   font-synthesis: none;
+}
+
+:root[data-theme="dark"] {
+  --primary-color: #6b9b6b;
+  --primary-hover: #7aab7a;
+  --secondary-color: #3d3520;
+  --accent-color: #e07040;
+  --accent-hover: #f08050;
+  --background-color: #1a1a1e;
+  --card-color: #252530;
+  --text-color: #e8e8ec;
+  --text-muted: #a0a0a8;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  color: var(--text-color);
+  background-color: var(--background-color);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -33,7 +48,6 @@ body {
   width: 100%;
   overflow-x: hidden;
   background-color: var(--background-color);
-  /* Set a default background color, can override if needed */
 }
 
 /* Optional base styles */

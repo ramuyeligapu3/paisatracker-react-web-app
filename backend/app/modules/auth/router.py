@@ -1,6 +1,8 @@
 from backend.app.common.utils import *
 from backend.app.core.config import settings
-from .schemas import UserCreate, UserLogin, ForgotPasswordRequest, ResetPasswordRequest
+from backend.app.core.security import verify_refresh_token
+from backend.app.core.email import send_email_async, render_welcome_html
+from .schemas import UserCreate, UserLogin, ForgotPasswordRequest, ResetPasswordRequest, ProfileUpdate
 from .service import AuthService
 from .repository import UserRepository
 
@@ -9,14 +11,43 @@ auth_router = APIRouter()
 def get_auth_service():
     return AuthService(UserRepository())
 
-@auth_router.post("/signup")
-async def signup(user: UserCreate, service: AuthService = Depends(get_auth_service)):
-    res= await service.register(user)
-    print(res,'(((((((((((((((((((((((((((((((signup)))))))))))))))))))))))))))))))')
 
+@auth_router.get("/me")
+async def get_me(current_user: str = Depends(get_current_user), service: AuthService = Depends(get_auth_service)):
+    user = await service.repo.get_by_id(current_user)
+    if not user:
+        raise AppException(message="User not found", status_code=404)
     return ORJSONResponse(
         status_code=200,
-        content=response(True,None, "User created successfull")
+        content=response(
+            True,
+            {"email": user.email, "display_name": user.display_name or "", "currency": user.currency or "INR"},
+            "Profile fetched",
+        ),
+    )
+
+
+@auth_router.patch("/profile")
+async def update_profile(
+    body: ProfileUpdate,
+    current_user: str = Depends(get_current_user),
+    service: AuthService = Depends(get_auth_service),
+):
+    user = await service.repo.get_by_id(current_user)
+    if not user:
+        raise AppException(message="User not found", status_code=404)
+    await service.repo.update_profile(user, display_name=body.display_name, currency=body.currency)
+    return ORJSONResponse(status_code=200, content=response(True, None, "Profile updated"))
+
+@auth_router.post("/signup")
+async def signup(user: UserCreate, service: AuthService = Depends(get_auth_service)):
+    await service.register(user)
+    login_url = f"{settings.FRONTEND_URL.rstrip('/')}/login"
+    welcome_html = render_welcome_html(user.email, settings.APP_NAME, login_url)
+    await send_email_async(user.email, f"Welcome to {settings.APP_NAME}", welcome_html)
+    return ORJSONResponse(
+        status_code=200,
+        content=response(True, None, "User created successfully")
     )
 
    
@@ -32,23 +63,24 @@ async def login(credentials: UserLogin, service: AuthService = Depends(get_auth_
             httponly=True,
             secure=not is_local,
             samesite="Lax",
+            path="/",
             max_age=60 * 60 * 24 * 7,  # 7 days
         )
     return res
 
 @auth_router.post("/refresh")
 async def refresh_token(request: Request):
-    refresh_token = request.cookies.get("refreshToken")
-    if not refresh_token:
+    refresh_token_val = request.cookies.get("refreshToken")
+    if not refresh_token_val:
         raise AppException(message="Refresh token missing", status_code=401)
-    payload = verify_token(refresh_token)
+    payload = verify_refresh_token(refresh_token_val)
     user_id = payload.get("sub")
     if not user_id:
         raise AppException(message="Invalid token", status_code=401)
     new_access_token = create_access_token(data={"sub": user_id})
     return ORJSONResponse(
         status_code=200,
-        content=response(True, {"accessToken": new_access_token}, "Token refreshed")
+        content=response(True, {"accessToken": new_access_token}, "Token refreshed"),
     )
 
 

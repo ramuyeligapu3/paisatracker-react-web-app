@@ -19,6 +19,8 @@ class TransactionRepository:
         search: Optional[str],
         category: Optional[str],
         account: Optional[str],
+        start_date: Optional[datetime],
+        end_date: Optional[datetime],
         skip: int,
         limit: int
     ) -> Tuple[int, List[TransactionModel]]:
@@ -36,6 +38,10 @@ class TransactionRepository:
             filters.append(TransactionModel.category == category)
         if account:
             filters.append(TransactionModel.account == account)
+        if start_date:
+            filters.append(TransactionModel.date >= start_date)
+        if end_date:
+            filters.append(TransactionModel.date <= end_date)
 
         total_task = TransactionModel.find(*filters).count()
         transactions_task = (
@@ -68,6 +74,10 @@ class TransactionRepository:
                 year = now.year
 
             this_month_start = datetime(year, month, 1)
+            if month == 12:
+                next_month_start = datetime(year + 1, 1, 1)
+            else:
+                next_month_start = datetime(year, month + 1, 1)
             if month == 1:
                 last_month_start = datetime(year - 1, 12, 1)
             else:
@@ -78,7 +88,7 @@ class TransactionRepository:
                 {
                     "$facet": {
                         "thisMonth": [
-                            {"$match": {"date": {"$gte": this_month_start}}},
+                            {"$match": {"date": {"$gte": this_month_start, "$lt": next_month_start}}},
                             {
                                 "$group": {
                                     "_id": None,
@@ -220,8 +230,12 @@ class TransactionRepository:
         if year is None:
             year = now.year
         this_month_start = datetime(year, month, 1)
+        if month == 12:
+            next_month_start = datetime(year + 1, 1, 1)
+        else:
+            next_month_start = datetime(year, month + 1, 1)
         pipeline = [
-            {"$match": {"user_id.$id": uid, "date": {"$gte": this_month_start}}},
+            {"$match": {"user_id.$id": uid, "date": {"$gte": this_month_start, "$lt": next_month_start}}},
             {
                 "$group": {
                     "_id": "$category",       # Group by category

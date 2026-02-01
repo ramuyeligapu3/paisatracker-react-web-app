@@ -6,8 +6,8 @@ export const getMonthlySummary = async (
   year = null
 ) => {
   const params = {};
-  if (month) params.month = month;
-  if (year) params.year = year;
+  if (month != null && month !== '') params.month = Number(month);
+  if (year != null && year !== '') params.year = Number(year);
 
   const res = await api.get(
     `/api/transactions/monthly_summary/${userId}`,
@@ -22,8 +22,8 @@ export const getCategoryDistribution = async (
   year = null
 ) => {
   const params = {};
-  if (month) params.month = month;
-  if (year) params.year = year;
+  if (month != null && month !== '') params.month = Number(month);
+  if (year != null && year !== '') params.year = Number(year);
 
   const res = await api.get(
     `/api/transactions/category_distribution/${userId}`,

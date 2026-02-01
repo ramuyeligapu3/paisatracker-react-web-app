@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from backend.app.models.models import UserModel
 
 class UserRepository:
@@ -39,3 +40,11 @@ class UserRepository:
         user.reset_token = None
         user.reset_token_expires = None
         await user.save()
+
+    async def update_profile(self, user: UserModel, display_name: Optional[str] = None, currency: Optional[str] = None) -> UserModel:
+        if display_name is not None:
+            user.display_name = display_name
+        if currency is not None:
+            user.currency = currency
+        await user.save()
+        return user

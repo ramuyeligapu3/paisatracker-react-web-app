@@ -1,3 +1,5 @@
+from datetime import datetime
+from typing import Optional
 from backend.app.modules.transactions.repository import TransactionRepository
 from backend.app.common.utils import response
 from backend.app.core.exceptions import AppException
@@ -8,9 +10,21 @@ class TransactionService:
 
     async def create_transaction(self, user_id: str, data: dict):
         return await self.repo.create_transaction(user_id, data)
-    async def list_transactions(self, user_id: str, search: str, category: str, account: str, page: int, limit: int):
+    async def list_transactions(
+        self,
+        user_id: str,
+        search: str,
+        category: str,
+        account: str,
+        start_date: Optional[datetime],
+        end_date: Optional[datetime],
+        page: int,
+        limit: int,
+    ):
         skip = (page - 1) * limit
-        total, transactions = await self.repo.get_transactions(user_id, search, category, account, skip, limit)
+        total, transactions = await self.repo.get_transactions(
+            user_id, search, category, account, start_date, end_date, skip, limit
+        )
         return {
             "total": total,
             "transactions": [

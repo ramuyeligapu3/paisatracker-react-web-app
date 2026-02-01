@@ -36,7 +36,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background-color: #fff;
+  background-color: var(--card-color, #fff);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 0;
@@ -48,6 +48,20 @@ body {
   font-size: 20px;
   font-weight: bold;
   color: var(--text-color);
+}
+
+.theme-toggle {
+  padding: 8px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  background: var(--card-color, #fff);
+  color: var(--text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.theme-toggle:hover {
+  background: var(--background-color, #f0f2f5);
 }
 
 .hamburger {
@@ -103,7 +117,7 @@ body {
   left: 0;
   height: 100%;
   width: 250px;
-  background-color: #fff;
+  background-color: var(--card-color, #fff);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
   padding-top: 80px;
   transform: translateX(-100%);

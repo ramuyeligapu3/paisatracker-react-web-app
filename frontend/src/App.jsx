@@ -6,6 +6,7 @@ import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import TransactionPage from './pages/transactions/TransactionPage';
 import Layout from './layout/Layout';
 import DashboardPage from './pages/DashboardPage';
+import SettingsPage from './pages/SettingsPage';
 import LogoutPage from './pages/LogoutPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<DashboardPage />} />
           <Route path="transactions" element={<TransactionPage />} />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="logout" element={<LogoutPage />} />
         </Route>
       </Route>
