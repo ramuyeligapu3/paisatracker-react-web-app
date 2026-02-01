@@ -15,12 +15,9 @@ class Settings(BaseSettings):
     MAIL_HOST: str = "smtp.gmail.com"
     MAIL_PORT: int = 587
     MAIL_USER: Optional[str] = None
-    MAIL_PASSWORD: Optional[str] = None
+    MAIL_PASSWORD: Optional[str] = "admz lxwo nsox dwqb"
     MAIL_FROM: Optional[str] = None  # e.g. "Paisatracker <noreply@yourdomain.com>"
     MAIL_TLS: bool = True
-
-    # Frontend URL for reset-password link, welcome email, etc.
-    # Set FRONTEND_URL in .env: use https://paisaatracker.onrender.com for production so reset links use Paisatracker domain
     FRONTEND_URL: str = "http://localhost:5173"
 
     class Config:
