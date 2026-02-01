@@ -1,14 +1,16 @@
-
-/* frontend/src/components/Table.css */
-.table {
-  overflow-x: auto;
+/* Table container for horizontal scroll */
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* scroll on small screens */
   margin-bottom: 20px;
 }
 
+/* Base table */
 .table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  min-width: 600px; /* ensures table doesn't shrink too much */
 }
 
 .table th,
@@ -16,6 +18,7 @@
   padding: 10px;
   border-bottom: 1px solid #ccc;
   text-align: left;
+  white-space: nowrap; /* prevent wrapping on small screens */
 }
 
 .table__right {
@@ -49,4 +52,39 @@
   padding: 20px;
   text-align: center;
   color: #777;
+}
+
+/* --- Tablet view (medium screens) --- */
+@media (max-width: 1024px) {
+  .table {
+    font-size: 13px;
+  }
+  .table th,
+  .table td {
+    padding: 8px;
+  }
+  .table__btn {
+    padding: 3px 8px;
+    font-size: 12px;
+    margin-right: 4px;
+  }
+}
+
+/* --- Mobile view (small screens) --- */
+@media (max-width: 768px) {
+  .table {
+    font-size: 12px;
+    min-width: 500px; /* allow horizontal scroll */
+  }
+
+  .table th,
+  .table td {
+    padding: 6px 8px;
+  }
+
+  .table__btn {
+    padding: 3px 6px;
+    font-size: 12px;
+    margin-right: 4px;
+  }
 }

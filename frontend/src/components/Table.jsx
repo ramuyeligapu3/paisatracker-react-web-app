@@ -1,15 +1,17 @@
-// frontend/src/components/Table.jsx
 import React from 'react';
 import './Table.css';
 
 const Table = ({ columns, data, onEdit, onDelete }) => {
   return (
-    <div className="table__wrapper">
+    <div className="table-container">
       <table className="table">
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col.key} className={col.align === 'right' ? 'table__right' : ''}>
+              <th
+                key={col.key}
+                className={col.align === 'right' ? 'table__right' : ''}
+              >
                 {col.label}
               </th>
             ))}
@@ -27,19 +29,28 @@ const Table = ({ columns, data, onEdit, onDelete }) => {
             data.map((row, index) => (
               <tr key={index}>
                 {columns.map((col) => (
-                  <td key={col.key} className={col.align === 'right' ? 'table__right' : ''}>
+                  <td
+                    key={col.key}
+                    className={col.align === 'right' ? 'table__right' : ''}
+                  >
                     {col.render ? col.render(row[col.key], row, index) : row[col.key]}
                   </td>
                 ))}
                 {(onEdit || onDelete) && (
-                  <td>
+                  <td className="table__actions">
                     {onEdit && (
-                      <button className="table__btn edit" onClick={() => onEdit(row)}>
+                      <button
+                        className="table__btn edit"
+                        onClick={() => onEdit(row)}
+                      >
                         Edit
                       </button>
                     )}
                     {onDelete && (
-                      <button className="table__btn delete" onClick={() => onDelete(row)}>
+                      <button
+                        className="table__btn delete"
+                        onClick={() => onDelete(row)}
+                      >
                         Delete
                       </button>
                     )}

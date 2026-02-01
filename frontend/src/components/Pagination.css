@@ -1,23 +1,21 @@
-/* frontend/src/components/Pagination.css */
-/* Override global button styles so pagination is clearly visible */
+/* Desktop / Tablet: Default */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 24px;
-  margin-bottom: 30px;
+  margin: 24px 0 30px;
   padding: 16px;
   min-height: 52px;
 }
 
-.pagination .pagination__btn {
+.pagination__btn {
   padding: 10px 16px;
-  border-radius: var(--border-radius, 8px);
+  border-radius: 8px;
   border: 1px solid #b0b0b0;
   background-color: #fff;
-  color: var(--text-color, #333);
+  color: #333;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -27,24 +25,24 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-.pagination .pagination__btn:hover:not(:disabled) {
+.pagination__btn:hover:not(:disabled) {
   background-color: #f0f2f5;
-  border-color: var(--primary-color, #5a9a5a);
-  color: var(--text-color, #333);
+  border-color: #5a9a5a;
+  color: #333;
 }
 
-.pagination .pagination__btn:disabled {
+.pagination__btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   background-color: #f5f5f5;
   color: #999;
 }
 
-.pagination .pagination__btn.active {
-  background-color: var(--primary-color, #5a9a5a);
+.pagination__btn.active {
+  background-color: #5a9a5a;
   color: #fff;
   font-weight: 600;
-  border-color: var(--primary-color, #5a9a5a);
+  border-color: #5a9a5a;
   box-shadow: 0 2px 4px rgba(90, 154, 90, 0.3);
 }
 
@@ -52,7 +50,47 @@
   display: inline-flex;
   align-items: center;
   padding: 0 6px;
-  color: var(--text-muted, #777);
+  color: #777;
   font-size: 14px;
   font-weight: 500;
+}
+
+/* Mobile view (max-width: 480px) */
+@media (max-width: 480px) {
+  .pagination {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .pagination__btn {
+    padding: 6px 10px;
+    min-width: 36px;
+    min-height: 36px;
+    font-size: 12px;
+  }
+
+  .pagination__btn.active {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .pagination__ellipsis {
+    font-size: 12px;
+    padding: 0 4px;
+  }
+}
+
+/* Optional: Extra small screens (max-width: 360px) */
+@media (max-width: 360px) {
+  .pagination__btn {
+    padding: 4px 8px;
+    min-width: 30px;
+    min-height: 30px;
+    font-size: 11px;
+  }
+
+  .pagination__ellipsis {
+    font-size: 10px;
+    padding: 0 2px;
+  }
 }
