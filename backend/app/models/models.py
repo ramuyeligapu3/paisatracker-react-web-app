@@ -6,22 +6,7 @@ from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, EmailStr
 from beanie import Document, init_beanie, Link
-
-# # 🌱 Load environment variables
-# load_dotenv()
-
-# # 🔗 MongoDB connection
-# MONGO_URI = os.getenv("MONGO_URI", "").strip()
-# if not MONGO_URI:
-#     raise Exception("MONGO_URI environment variable is missing")
-
-# client = AsyncIOMotorClient(
-#     MONGO_URI,
-#     connectTimeoutMS=5000
-# )
-
-
-# db = client.get_default_database()  # will be `paisaatracker_db` if specified in URI
+from pymongo import IndexModel, ASCENDING, DESCENDING
 
 # ---------------- Models ----------------
 
@@ -32,12 +17,12 @@ class UserModel(Document):
     reset_token_expires: Optional[datetime] = None
     display_name: Optional[str] = None
     currency: Optional[str] = "INR"
-    email_digest: Optional[bool] = True  # monthly summary emails
+    email_digest: Optional[bool] = True
 
     class Settings:
         name = "users"
         indexes = [
-            "email",  # 📌 Index for faster login lookup
+            IndexModel([("email", ASCENDING)], unique=True)
         ]
 
 
@@ -52,11 +37,12 @@ class TransactionModel(Document):
     class Settings:
         name = "transactions"
         indexes = [
-            "user_id",           # 🔍 for user filtering
-            "date",              # 📅 for sorting
-            "category",          # 🗂 for filtering
-            [("user_id", 1), ("date", -1)]  # 🧠 compound: get user transactions by date desc
+            IndexModel([("user_id", ASCENDING)]),
+            IndexModel([("date", DESCENDING)]),
+            IndexModel([("category", ASCENDING)]),
+            IndexModel([("user_id", ASCENDING), ("date", DESCENDING)])
         ]
+
 
 class BudgetModel(Document):
     user_id: Link[UserModel]
@@ -68,9 +54,51 @@ class BudgetModel(Document):
     class Settings:
         name = "budgets"
         indexes = [
-            [("user_id", 1), ("month", 1), ("year", 1), ("category", 1)],  # unique per user/month/year/category
+            IndexModel([
+                ("user_id", ASCENDING),
+                ("month", ASCENDING),
+                ("year", ASCENDING),
+                ("category", ASCENDING)
+            ], unique=True)
+        ]
+
+
+class SavingsGoalModel(Document):
+    user_id: Link[UserModel]
+    name: str
+    target_amount: float
+    current_amount: float = 0.0
+    deadline: Optional[datetime] = None
+
+    class Settings:
+        name = "savings_goals"
+        indexes = [
+            IndexModel([("user_id", ASCENDING)])
+        ]
+
+
+class RecurringTransactionModel(Document):
+    user_id: Link[UserModel]
+    description: str
+    amount: float
+    category: str
+    account: Optional[str] = None
+    frequency: str
+    next_date: datetime
+    is_active: bool = True
+
+    class Settings:
+        name = "recurring_transactions"
+        indexes = [
+            IndexModel([("user_id", ASCENDING)])
         ]
 
 
 # ✅ Register Beanie models
-document_models = [UserModel, TransactionModel, BudgetModel]
+document_models = [
+    UserModel,
+    TransactionModel,
+    BudgetModel,
+    SavingsGoalModel,
+    RecurringTransactionModel,
+]

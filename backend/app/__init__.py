@@ -12,6 +12,8 @@ from backend.app.core.database import init_db,client
 from backend.app.modules.auth.router import auth_router
 from backend.app.modules.transactions.router import transaction_router
 from backend.app.modules.budgets.router import budget_router
+from backend.app.modules.goals.router import goal_router
+from backend.app.modules.recurring.router import recurring_router
 from backend.app.core.exceptions import *
 import traceback
 # from backend.app.controller.auth_router import auth_router
@@ -60,6 +62,8 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(transaction_router, prefix="/api", tags=["transactions"], dependencies=[Depends(get_current_user)])
 app.include_router(budget_router, prefix="/api", tags=["budgets"], dependencies=[Depends(get_current_user)])
+app.include_router(goal_router, prefix="/api", tags=["goals"], dependencies=[Depends(get_current_user)])
+app.include_router(recurring_router, prefix="/api", tags=["recurring"], dependencies=[Depends(get_current_user)])
 
 
 @app.exception_handler(AppException)

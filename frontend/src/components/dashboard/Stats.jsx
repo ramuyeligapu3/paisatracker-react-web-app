@@ -1,21 +1,24 @@
 // frontend/src/components/dashboard/Stats.jsx
 import React from "react";
 
-const Stats = ({ summary }) => {
+const CURRENCY_SYMBOLS = { INR: "₹", USD: "$", EUR: "€" };
+
+const Stats = ({ summary, currency = "INR" }) => {
   if (!summary) return <div className="stats">Loading stats...</div>;
 
+  const symbol = CURRENCY_SYMBOLS[currency] || "₹";
   const {
     netBalance = 0,
     totalIncome = 0,
     totalExpenses = 0,
-    savings = totalIncome - Math.abs(totalExpenses), // fallback if not in API
+    savings = totalIncome - Math.abs(totalExpenses),
   } = summary;
 
   const statsData = [
-    { title: "Total Balance", value: `₹${netBalance.toLocaleString()}`, icon: "💰" },
-    { title: "Monthly Income", value: `₹${totalIncome.toLocaleString()}`, icon: "⬆️" },
-    { title: "Monthly Expenses", value: `₹${Math.abs(totalExpenses).toLocaleString()}`, icon: "⬇️" },
-    { title: "Savings", value: `₹${savings.toLocaleString()}`, icon: "🐷" },
+    { title: "Total Balance", value: `${symbol}${netBalance.toLocaleString()}`, icon: "💰" },
+    { title: "Monthly Income", value: `${symbol}${totalIncome.toLocaleString()}`, icon: "⬆️" },
+    { title: "Monthly Expenses", value: `${symbol}${Math.abs(totalExpenses).toLocaleString()}`, icon: "⬇️" },
+    { title: "Savings", value: `${symbol}${savings.toLocaleString()}`, icon: "🐷" },
   ];
 
   return (

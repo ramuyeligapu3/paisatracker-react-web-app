@@ -8,9 +8,12 @@ import Actions from "./Actions";
 import ExportModal from "./ExportModal";
 import TipsCard from "./TipsCard";
 import BudgetsCard from "./BudgetsCard";
-import Toast from "../../components/Toast"; // ✅ use your Toast
+import GoalsCard from "./GoalsCard";
+import RecurringCard from "./RecurringCard";
+import Toast from "../../components/Toast";
 import { getMonthlySummary, getCategoryDistribution } from "../../apis/dashboardApi";
 import { getTransactions } from "../../apis/transactionApi";
+import { getProfile } from "../../apis/profileApi";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -22,6 +25,7 @@ const Dashboard = () => {
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [currency, setCurrency] = useState("INR");
 
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportStartDate, setExportStartDate] = useState("");
@@ -71,6 +75,19 @@ const Dashboard = () => {
     fetchSummary();
     fetchCategoryDistribution();
   }, [selectedMonth, selectedYear]);
+
+  // Fetch profile for currency
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await getProfile();
+        if (res.success && res.data?.currency) setCurrency(res.data.currency);
+      } catch {
+        // keep default INR
+      }
+    };
+    fetchProfile();
+  }, []);
 
   // Fetch recent transactions
   useEffect(() => {
@@ -175,15 +192,26 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <Stats summary={summary} />
+      {!summary && !loadingCategories ? (
+        <div className="dashboard-empty">
+          <p className="dashboard-empty-title">Welcome to Paisatracker</p>
+          <p className="dashboard-empty-text">Add your first transaction to see your dashboard come to life.</p>
+          <button type="button" className="dashboard-empty-btn" onClick={handleAddTransaction}>
+            Add transaction
+          </button>
+        </div>
+      ) : (
+        <>
+      <Stats summary={summary} currency={currency} />
       <div className="dashboard-tips-budgets">
         <TipsCard summary={summary} />
-        <BudgetsCard
-          selectedMonth={selectedMonth}
-          selectedYear={selectedYear}
-        />
+        <BudgetsCard selectedMonth={selectedMonth} selectedYear={selectedYear} />
+        <GoalsCard currency={currency} />
       </div>
+      <RecurringCard currency={currency} categories={["Bills & Utilities", "Entertainment", "Income", "Shopping", "Other"]} />
       <Charts data={categoryData} loading={loadingCategories} />
+        </>
+      )}
 
       <div className="bottom-section">
         <Transactions transactions={recentTransactions} />
