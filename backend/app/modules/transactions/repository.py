@@ -54,6 +54,32 @@ class TransactionRepository:
 
         return await asyncio.gather(total_task, transactions_task)
 
+    async def get_distinct_categories(self, user_id: str) -> List[str]:
+        uid = ObjectId(user_id)
+        pipeline = [
+            {"$match": {"user_id.$id": uid}},
+            {"$group": {"_id": "$category"}},
+            {"$sort": {"_id": 1}},
+            {"$project": {"_id": 0, "category": "$_id"}},
+        ]
+        collection = TransactionModel.get_pymongo_collection()
+        cursor = collection.aggregate(pipeline)
+        rows = await cursor.to_list(length=None)
+        return [r["category"] for r in rows if r.get("category")]
+
+    async def get_distinct_accounts(self, user_id: str) -> List[str]:
+        uid = ObjectId(user_id)
+        pipeline = [
+            {"$match": {"user_id.$id": uid}},
+            {"$group": {"_id": "$account"}},
+            {"$sort": {"_id": 1}},
+            {"$project": {"_id": 0, "account": "$_id"}},
+        ]
+        collection = TransactionModel.get_pymongo_collection()
+        cursor = collection.aggregate(pipeline)
+        rows = await cursor.to_list(length=None)
+        return [r["account"] for r in rows if r.get("account")]
+
     async def get_transaction_by_id(self, id: str) -> Optional[TransactionModel]:
         return await TransactionModel.get(PydanticObjectId(id))
 

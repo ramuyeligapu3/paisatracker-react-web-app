@@ -67,6 +67,20 @@ class TransactionService:
     async def get_current_month_category_distribution(self,user_id:str, month: int = None, year: int = None):
         summery=await self.repo.get_current_month_category_distribution(user_id, month, year)
         return summery
-            
 
-       
+    DEFAULT_CATEGORIES = [
+        "Food & Dining", "Income", "Transportation", "Entertainment",
+        "Bills & Utilities", "Shopping", "Healthcare", "Travel", "Education", "Other",
+    ]
+    DEFAULT_ACCOUNTS = ["Checking Account", "Savings Account", "Credit Card", "Cash", "Other"]
+
+    async def get_categories(self, user_id: str) -> list:
+        used = await self.repo.get_distinct_categories(user_id)
+        combined = list(dict.fromkeys(self.DEFAULT_CATEGORIES + [c for c in used if c not in self.DEFAULT_CATEGORIES]))
+        return combined
+
+    async def get_accounts(self, user_id: str) -> list:
+        used = await self.repo.get_distinct_accounts(user_id)
+        combined = list(dict.fromkeys(self.DEFAULT_ACCOUNTS + [a for a in used if a and a not in self.DEFAULT_ACCOUNTS]))
+        return combined
+

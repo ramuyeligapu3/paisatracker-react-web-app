@@ -82,6 +82,24 @@ async def delete_transaction(
             status_code=200,
             content=response(True, message="Transaction deleted")
         )
+@transaction_router.get("/categories")
+async def list_categories(
+    current_user: str = Depends(get_current_user),
+    service: TransactionService = Depends(get_transaction_service),
+):
+    categories = await service.get_categories(current_user)
+    return ORJSONResponse(status_code=200, content=response(True, categories, "Categories fetched"))
+
+
+@transaction_router.get("/accounts")
+async def list_accounts(
+    current_user: str = Depends(get_current_user),
+    service: TransactionService = Depends(get_transaction_service),
+):
+    accounts = await service.get_accounts(current_user)
+    return ORJSONResponse(status_code=200, content=response(True, accounts, "Accounts fetched"))
+
+
 @transaction_router.get("/transactions/monthly_summary/{userId}")
 async def transactions_monthly_summary(
     userId: str,

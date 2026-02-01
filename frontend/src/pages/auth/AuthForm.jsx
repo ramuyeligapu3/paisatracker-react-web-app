@@ -66,7 +66,7 @@ const handleSubmit = async (e) => {
 
     } else if (view === 'forgot') {
       res = await forgotPassword(email);
-      showToast(res.message, 'success');
+      showToast(res.message || 'If an account exists, check your email for a Paisatracker reset link.', 'success');
     }
 
   } catch (err) {
@@ -118,7 +118,7 @@ const handleSubmit = async (e) => {
         <button type="submit" className="auth-form-button">
           {view === 'login' && 'Sign In'}
           {view === 'signup' && 'Sign Up'}
-          {view === 'forgot' && 'Reset Password'}
+          {view === 'forgot' && 'Send reset link'}
         </button>
       </form>
 

@@ -1,14 +1,42 @@
 .settings-page {
-  max-width: 560px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.settings-page-header {
+  margin-bottom: 28px;
 }
 
 .settings-page h2 {
-  margin-bottom: 8px;
+  margin: 0 0 6px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-page h2 .settings-icon {
+  font-size: 1.5rem;
+  opacity: 0.9;
 }
 
 .settings-subtitle {
-  color: #666;
-  margin-bottom: 24px;
+  color: var(--text-muted, #666);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.settings-grid {
+  display: grid;
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .settings-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .settings-card {
@@ -16,15 +44,33 @@
   border-radius: var(--border-radius, 10px);
   box-shadow: var(--box-shadow, 0 4px 8px rgba(0, 0, 0, 0.1));
   padding: 24px;
+  border-left: 4px solid var(--primary-color, #8fbc8f);
+}
+
+.settings-card.settings-card-password {
+  border-left-color: var(--accent-color, #ff7f50);
 }
 
 .settings-card h3 {
   margin: 0 0 20px;
   font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-card h3 .card-icon {
+  font-size: 1.2rem;
 }
 
 .settings-field {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+}
+
+.settings-field:last-of-type {
+  margin-bottom: 0;
 }
 
 .settings-field label {
@@ -32,26 +78,87 @@
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 6px;
-  color: #333;
+  color: var(--text-color);
 }
 
 .settings-field input,
 .settings-field select {
   width: 100%;
-  max-width: 320px;
+  max-width: 100%;
   padding: 10px 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
+  background: var(--card-color);
+  color: var(--text-color);
 }
 
 .settings-field input:disabled {
-  background: #f5f5f5;
-  color: #666;
+  background: var(--background-color, #f5f5f5);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.settings-field input:focus,
+.settings-field select:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.settings-toggle-label {
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+.settings-toggle-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.settings-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #ccc;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.settings-toggle.on {
+  background: var(--primary-color);
+}
+
+.settings-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.settings-toggle.on .settings-toggle-knob {
+  transform: translateX(20px);
 }
 
 .settings-save-btn {
-  margin-top: 8px;
+  margin-top: 20px;
   padding: 12px 24px;
   border: none;
   border-radius: var(--border-radius, 10px);
@@ -60,6 +167,7 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .settings-save-btn:hover:not(:disabled) {
@@ -69,4 +177,27 @@
 .settings-save-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.settings-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--text-muted);
+}
+
+.settings-loading-skeleton {
+  width: 100%;
+  max-width: 320px;
+  height: 40px;
+  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+  background-size: 200% 100%;
+  animation: settings-shimmer 1.2s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes settings-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

@@ -54,7 +54,7 @@ const ResetPasswordPage = () => {
           <div className="auth-form-container">
             <h2 className="auth-form-title">Invalid reset link</h2>
             <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-              Use the link from your email or request a new one from the login page.
+              Use the link from your Paisatracker email or request a new one from the login page.
             </p>
             <button type="button" className="auth-form-button" onClick={() => navigate('/login')}>
               Back to Sign In

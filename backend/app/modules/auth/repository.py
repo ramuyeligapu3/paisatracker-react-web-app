@@ -41,10 +41,18 @@ class UserRepository:
         user.reset_token_expires = None
         await user.save()
 
-    async def update_profile(self, user: UserModel, display_name: Optional[str] = None, currency: Optional[str] = None) -> UserModel:
+    async def update_profile(
+        self,
+        user: UserModel,
+        display_name: Optional[str] = None,
+        currency: Optional[str] = None,
+        email_digest: Optional[bool] = None,
+    ) -> UserModel:
         if display_name is not None:
             user.display_name = display_name
         if currency is not None:
             user.currency = currency
+        if email_digest is not None:
+            user.email_digest = email_digest
         await user.save()
         return user

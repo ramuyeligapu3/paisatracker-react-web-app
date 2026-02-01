@@ -2,7 +2,7 @@ from backend.app.common.utils import *
 from backend.app.core.config import settings
 from backend.app.core.security import verify_refresh_token
 from backend.app.core.email import send_email_async, render_welcome_html
-from .schemas import UserCreate, UserLogin, ForgotPasswordRequest, ResetPasswordRequest, ProfileUpdate
+from .schemas import UserCreate, UserLogin, ForgotPasswordRequest, ResetPasswordRequest, ProfileUpdate, ChangePasswordRequest
 from .service import AuthService
 from .repository import UserRepository
 
@@ -21,7 +21,12 @@ async def get_me(current_user: str = Depends(get_current_user), service: AuthSer
         status_code=200,
         content=response(
             True,
-            {"email": user.email, "display_name": user.display_name or "", "currency": user.currency or "INR"},
+            {
+                "email": user.email,
+                "display_name": user.display_name or "",
+                "currency": user.currency or "INR",
+                "email_digest": user.email_digest if user.email_digest is not None else True,
+            },
             "Profile fetched",
         ),
     )
@@ -36,8 +41,23 @@ async def update_profile(
     user = await service.repo.get_by_id(current_user)
     if not user:
         raise AppException(message="User not found", status_code=404)
-    await service.repo.update_profile(user, display_name=body.display_name, currency=body.currency)
+    await service.repo.update_profile(
+        user,
+        display_name=body.display_name,
+        currency=body.currency,
+        email_digest=body.email_digest if body.email_digest is not None else None,
+    )
     return ORJSONResponse(status_code=200, content=response(True, None, "Profile updated"))
+
+
+@auth_router.patch("/change-password")
+async def change_password(
+    body: ChangePasswordRequest,
+    current_user: str = Depends(get_current_user),
+    service: AuthService = Depends(get_auth_service),
+):
+    await service.change_password(current_user, body.current_password, body.new_password)
+    return ORJSONResponse(status_code=200, content=response(True, None, "Password updated"))
 
 @auth_router.post("/signup")
 async def signup(user: UserCreate, service: AuthService = Depends(get_auth_service)):

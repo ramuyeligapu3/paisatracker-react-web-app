@@ -32,6 +32,7 @@ class UserModel(Document):
     reset_token_expires: Optional[datetime] = None
     display_name: Optional[str] = None
     currency: Optional[str] = "INR"
+    email_digest: Optional[bool] = True  # monthly summary emails
 
     class Settings:
         name = "users"

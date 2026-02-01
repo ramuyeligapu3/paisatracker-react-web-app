@@ -14,21 +14,14 @@ import {
   updateTransaction,
   deleteTransaction,
   getMonthlySummary,
+  getCategories,
+  getAccounts,
 } from "../../apis/transactionApi";
 
-const categoryOptions = [
-  "Food & Dining",
-  "Income",
-  "Transportation",
-  "Entertainment",
-  "Bills & Utilities",
+const DEFAULT_CATEGORIES = [
+  "Food & Dining", "Income", "Transportation", "Entertainment", "Bills & Utilities",
 ];
-
-const accountOptions = [
-  "Checking Account",
-  "Savings Account",
-  "Credit Card",
-];
+const DEFAULT_ACCOUNTS = ["Checking Account", "Savings Account", "Credit Card"];
 
 const dynamicColumns = [
   { key: "date", label: "Date" },
@@ -61,14 +54,16 @@ function TransactionsPage() {
 
   const transactionsPerPage = 5;
 
+  const [categoryOptions, setCategoryOptions] = useState(DEFAULT_CATEGORIES);
+  const [accountOptions, setAccountOptions] = useState(DEFAULT_ACCOUNTS);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("add");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [transactionForm, setTransactionForm] = useState({
     date: "",
     description: "",
-    category: categoryOptions[0],
-    account: accountOptions[0],
+    category: DEFAULT_CATEGORIES[0],
+    account: DEFAULT_ACCOUNTS[0],
     amount: "",
   });
 
@@ -147,6 +142,19 @@ function TransactionsPage() {
   }, [fetchSummary]);
 
   useEffect(() => {
+    const loadOptions = async () => {
+      try {
+        const [catRes, accRes] = await Promise.all([getCategories(), getAccounts()]);
+        if (catRes?.success && Array.isArray(catRes.data)) setCategoryOptions(catRes.data);
+        if (accRes?.success && Array.isArray(accRes.data)) setAccountOptions(accRes.data);
+      } catch {
+        // keep defaults
+      }
+    };
+    if (localStorage.getItem("userId")) loadOptions();
+  }, []);
+
+  useEffect(() => {
     if (location.state?.openAddModal) {
       openAddModal();
     }
@@ -167,8 +175,8 @@ function TransactionsPage() {
     setTransactionForm({
       date: "",
       description: "",
-      category: categoryOptions[0],
-      account: accountOptions[0],
+      category: categoryOptions[0] || DEFAULT_CATEGORIES[0],
+      account: accountOptions[0] || DEFAULT_ACCOUNTS[0],
       amount: "",
     });
     setShowModal(true);

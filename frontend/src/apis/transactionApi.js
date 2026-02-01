@@ -45,3 +45,13 @@ export const getMonthlySummary = async (userId) => {
   );
   return res.data;
 };
+
+export const getCategories = async () => {
+  const res = await api.get('/api/categories');
+  return res.data;
+};
+
+export const getAccounts = async () => {
+  const res = await api.get('/api/accounts');
+  return res.data;
+};

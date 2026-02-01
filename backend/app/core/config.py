@@ -19,7 +19,8 @@ class Settings(BaseSettings):
     MAIL_FROM: Optional[str] = None  # e.g. "Paisatracker <noreply@yourdomain.com>"
     MAIL_TLS: bool = True
 
-    # Frontend URL for reset-password link
+    # Frontend URL for reset-password link, welcome email, etc.
+    # Set FRONTEND_URL in .env: use https://paisaatracker.onrender.com for production so reset links use Paisatracker domain
     FRONTEND_URL: str = "http://localhost:5173"
 
     class Config:

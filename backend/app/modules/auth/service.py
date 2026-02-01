@@ -55,3 +55,11 @@ class AuthService:
         if not user.reset_token_expires or user.reset_token_expires < datetime.utcnow():
             raise AppException(message="Reset link has expired", status_code=400)
         await self.repo.update_password(user, hash_password(new_password))
+
+    async def change_password(self, user_id: str, current_password: str, new_password: str) -> None:
+        user = await self.repo.get_by_id(user_id)
+        if not user:
+            raise AppException(message="User not found", status_code=404)
+        if not verify_password(current_password, user.password_hash):
+            raise AppException(message="Current password is incorrect", status_code=400)
+        await self.repo.update_password(user, hash_password(new_password))

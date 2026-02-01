@@ -21,3 +21,9 @@ class ResetPasswordRequest(BaseModel):
 class ProfileUpdate(BaseModel):
     display_name: Optional[str] = None
     currency: Optional[str] = None
+    email_digest: Optional[bool] = None
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
