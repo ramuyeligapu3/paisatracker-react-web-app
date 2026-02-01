@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     MAIL_TLS: bool = Field(True,description="Whether to use TLS to send emails")
 
     FRONTEND_URL: str = Field("https://paisaatracker.onrender.com",description="URL of the frontend application")
+    RESEND_API_KEY: str = Field(..., description="Resend API key")
 
 
 settings = Settings()

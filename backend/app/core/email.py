@@ -1,62 +1,40 @@
 # backend/app/core/email.py
 import asyncio
 import logging
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from typing import Optional
-
+import resend
 from .config import settings
 
 logger = logging.getLogger(__name__)
 
-
-def _get_connection():
-    if not settings.MAIL_USER or not settings.MAIL_PASSWORD:
-        logger.warning("MAIL_USER or MAIL_PASSWORD not set in .env")
-        return None
-    try:
-        smtp = smtplib.SMTP(settings.MAIL_HOST, settings.MAIL_PORT)
-        if settings.MAIL_TLS:
-            smtp.starttls()
-        smtp.login(settings.MAIL_USER, settings.MAIL_PASSWORD)
-        return smtp
-    except Exception as e:
-        logger.warning("SMTP connection failed: %s", e)
-        return None
+# Configure Resend
+resend.api_key = settings.RESEND_API_KEY
 
 
 def send_email(to: str, subject: str, html_body: str, text_body: Optional[str] = None) -> bool:
-    """Send an email. Returns True if sent, False if mail not configured or send failed."""
-    smtp = _get_connection()
-    if not smtp:
-        return False
-    from_addr = settings.MAIL_FROM or settings.MAIL_USER or "noreply@paisatracker.com"
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"] = from_addr
-    msg["To"] = to
-    if text_body:
-        msg.attach(MIMEText(text_body, "plain"))
-    msg.attach(MIMEText(html_body, "html"))
+    """Send email using Resend API"""
     try:
-        smtp.sendmail(from_addr, [to], msg.as_string())
-        smtp.quit()
+        params = {
+            "from": settings.MAIL_FROM,
+            "to": [to],
+            "subject": subject,
+            "html": html_body,
+        }
+
+        if text_body:
+            params["text"] = text_body
+
+        resend.Emails.send(params)
         return True
+
     except Exception as e:
-        logger.warning("Send mail failed: %s", e)
-        try:
-            smtp.quit()
-        except Exception:
-            pass
+        logger.warning("Resend send failed: %s", e)
         return False
 
 
 async def send_email_async(to: str, subject: str, html_body: str, text_body: Optional[str] = None) -> bool:
-    """Send email in a thread pool so it does not block the event loop."""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, lambda: send_email(to, subject, html_body, text_body))
-
 
 def render_welcome_html(user_email: str, app_name: str = "Paisatracker", login_url: str = "") -> str:
     return f"""
