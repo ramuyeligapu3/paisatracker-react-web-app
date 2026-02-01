@@ -12,10 +12,14 @@ logger = logging.getLogger(__name__)
 
 
 def _get_connection():
+    if not settings.MAIL_USER or not settings.MAIL_PASSWORD:
+        logger.warning("MAIL_USER or MAIL_PASSWORD not set in .env")
+        return None
     try:
-        smtp = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
-        smtp.starttls()
-        smtp.login("ramuyeligapu6@gmail.com", "admz lxwo nsox dwqb")
+        smtp = smtplib.SMTP(settings.MAIL_HOST, settings.MAIL_PORT)
+        if settings.MAIL_TLS:
+            smtp.starttls()
+        smtp.login(settings.MAIL_USER, settings.MAIL_PASSWORD)
         return smtp
     except Exception as e:
         logger.warning("SMTP connection failed: %s", e)
@@ -27,8 +31,7 @@ def send_email(to: str, subject: str, html_body: str, text_body: Optional[str] =
     smtp = _get_connection()
     if not smtp:
         return False
-    # from_addr = settings.MAIL_FROM or settings.MAIL_USER or "noreply@paisatracker.com"
-    from_addr = "Paisatracker <ramuyeligapu6@gmail.com>"
+    from_addr = settings.MAIL_FROM or settings.MAIL_USER or "noreply@paisatracker.com"
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = from_addr

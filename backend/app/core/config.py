@@ -1,27 +1,24 @@
-import os
-from pydantic_settings import BaseSettings
-from typing import Optional
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
-# Prefer .env at project root (parent of backend/)
-_env_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", ".env")
-if not os.path.isfile(_env_path):
-    _env_path = ".env"
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True
+    )
+
     APP_NAME: str = "Paisatracker"
-    DATABASE_URL: str
+    DATABASE_URL: str = Field(..., description="MongoDB connection string")
 
-    # Email (SMTP) – for reset password and monthly summary
-    MAIL_HOST: str = "smtp.gmail.com"
-    MAIL_PORT: int = 587
-    MAIL_USER: Optional[str] = None
-    MAIL_PASSWORD: Optional[str] = "admz lxwo nsox dwqb"
-    MAIL_FROM: Optional[str] = None  # e.g. "Paisatracker <noreply@yourdomain.com>"
-    MAIL_TLS: bool = True
-    FRONTEND_URL: str = "http://localhost:5173"
+    MAIL_HOST: str = Field("smtp.gmail.com")
+    MAIL_PORT: int = Field(587,description="Port to send emails from")
+    MAIL_USER: str = Field(...,description="Email address to send emails from")
+    MAIL_PASSWORD: str = Field(...,description="Password for the email address")
+    MAIL_FROM: str = Field(...,description="Email address to send emails from")
+    MAIL_TLS: bool = Field(True,description="Whether to use TLS to send emails")
 
-    class Config:
-        env_file = _env_path
-        env_file_encoding = "utf-8"
+    FRONTEND_URL: str = Field("https://paisaatracker.onrender.com",description="URL of the frontend application")
+
 
 settings = Settings()
