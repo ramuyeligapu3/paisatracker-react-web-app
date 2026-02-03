@@ -107,3 +107,60 @@ select:focus {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
+
+/* Placeholder color should follow theme */
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+/* Make native date/time input inner text visible in dark mode */
+input[type="date"],
+input[type="month"],
+input[type="datetime-local"] {
+  color: var(--text-color);
+  background-color: var(--card-color);
+}
+
+/* Webkit-based browsers expose internal date-edit pseudo elements */
+input[type="date"]::-webkit-datetime-edit,
+input[type="date"]::-webkit-datetime-edit-field,
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field {
+  color: var(--text-color);
+  -webkit-text-fill-color: var(--text-color);
+  opacity: 1 !important;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 600;
+  text-shadow: none !important;
+}
+
+/* Firefox may need this to ensure consistent color */
+input[type="date"]::-moz-focus-inner {
+  color: var(--text-color);
+}
+
+/* Higher specificity for filters date inputs (used in dashboard/transactions) */
+.filters__date,
+.filters__date[type="date"] {
+  color: var(--text-color);
+  background-color: var(--card-color);
+  border: 1px solid var(--text-muted);
+  opacity: 1;
+  -webkit-text-fill-color: var(--text-color);
+  -webkit-text-fill-color: var(--text-color);
+}
+
+.filters__date::-webkit-datetime-edit,
+.filters__date::-webkit-datetime-edit-field,
+.filters__date::-webkit-datetime-edit-text,
+.filters__date::-webkit-datetime-edit-month-field,
+.filters__date::-webkit-datetime-edit-day-field,
+.filters__date::-webkit-datetime-edit-year-field {
+  color: var(--text-color);
+  -webkit-text-fill-color: var(--text-color);
+}

@@ -20,7 +20,9 @@
   min-width: 120px;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--text-muted);
+  background-color: var(--card-color);
+  color: var(--text-color);
   font-size: 14px;
 }
 
@@ -29,7 +31,9 @@
   flex: 0 0 140px;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--text-muted);
+  background-color: var(--card-color);
+  color: var(--text-color);
   font-size: 14px;
 }
 
@@ -38,7 +42,9 @@
   flex: 0 0 140px;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--text-muted);
+  background-color: var(--card-color);
+  color: var(--text-color);
   font-size: 14px;
 }
 
@@ -94,22 +100,22 @@
     flex: 1 1 auto;
   }
 
-  .filters__date {
-    min-height: 40px; /* ensures date input has enough height on mobile */
-  }
-}
-
-/* --- Extra small screens (<480px) --- */
-@media (max-width: 480px) {
-  .filters__search,
-  .filters__date,
-  .filters__dropdown,
   .filters__add-btn {
-    font-size: 12px;
-    padding: 6px 8px;
+    flex: 0 0 auto;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
   }
-
-  .filters__date {
+  .filters__add-btn:hover {
+    background-color: var(--primary-hover);
+  }
     min-height: 36px;
   }
 }
